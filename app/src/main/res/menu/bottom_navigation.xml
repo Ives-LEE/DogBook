@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navMyDog"
+        android:title="@string/myDog"
+        android:icon="@drawable/ic_dog"/>
+    <item
+        android:id="@+id/navActivities"
+        android:icon="@drawable/ic_activity_black_24dp"
+        android:title="@string/activities" />
+    <item
+        android:id="@+id/navFriends"
+        android:icon="@drawable/ic_friends_black_24dp"
+        android:title="@string/friends" />
+    <item
+        android:id="@+id/navChats"
+        android:icon="@drawable/ic_chat_black_24dp"
+        android:title="@string/chats" />
+    <item
+        android:id="@+id/navArticles"
+        android:icon="@drawable/ic_articles_black_24dp"
+        android:title="@string/article" />
+
+
+</menu>

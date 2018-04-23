@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">DogBook</string>
+    <string name="myDog">MyDog</string>
+    <string name="activities">Activity</string>
+    <string name="friends">Friends</string>
+    <string name="article">Articles</string>
+    <string name="chats">Chats</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="signIn">Sign-In</string>
+    <string name="signUp">Sign-Up</string>
+    <string name="name">Name</string>
+    <string name="birthday">Birthday</string>
+    <string name="age">Age</string>
+    <string name="Hide">Hide</string>
+    <string name="man">Male</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">ADD</string>
 </resources>

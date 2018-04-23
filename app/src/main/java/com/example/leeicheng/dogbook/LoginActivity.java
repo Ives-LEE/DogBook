@@ -1,13 +1,12 @@
 package com.example.leeicheng.dogbook;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -23,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText etEmail, etPassword;
     Button btnSignIn, btnSignUp;
     ImageView ivLogo;
+    Common common;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     void findViews() {
+        common = new Common(this);
         etEmail = findViewById(R.id.etEmailLogin);
         etPassword = findViewById(R.id.etPasswordLogin);
         btnSignIn = findViewById(R.id.btnSignInLogin);
@@ -49,7 +50,16 @@ public class LoginActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString();
                 hideKeyboard();
 
+
                 if (isLogin(email, password)) {
+                    SharedPreferences pref = getSharedPreferences(common.PREF_FILE,
+                            MODE_PRIVATE);
+                    pref.edit()
+                            .putBoolean("login", true)
+                            .putString("email", email)
+                            .putString("password", password)
+                            .apply();
+                    Log.d("設定",pref.getAll().toString());
                     finish();
                 }
             }
@@ -68,7 +78,12 @@ public class LoginActivity extends AppCompatActivity {
 
     //切換至注冊頁面
     void showSignUpLayout() {
-
+        SignUpFragment signUpFragment = new SignUpFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.flLogin, signUpFragment);
+        fragmentTransaction.commit();
     }
 
     void hideKeyboard() {
@@ -77,14 +92,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     boolean isLogin(String email, String password) {
-        Common common = new Common(this);
+        SharedPreferences pref = getSharedPreferences(common.PREF_FILE,
+                MODE_PRIVATE);
         boolean isLogin = false;
         if (common.isNetworkConnect()) {
-            String URL = common.URL + "/";
-
+            String URL = common.URL + "/OwnerServlet";
+            Owner owner = new Owner(email,password);
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("email", email);
-            jsonObject.addProperty("password", password);
+            jsonObject.addProperty("status","signIn");
+            jsonObject.addProperty("owner", new Gson().toJson(owner));
 
             GeneralTask generalTask = new GeneralTask(URL, jsonObject.toString());
 
@@ -92,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                 String JsonIn = generalTask.execute().get();
                 jsonObject = new Gson().fromJson(JsonIn, JsonObject.class);
                 isLogin = jsonObject.get("isLogin").getAsBoolean();
+                pref.edit().putInt("id",jsonObject.get("ownerId").getAsInt()).apply();
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
