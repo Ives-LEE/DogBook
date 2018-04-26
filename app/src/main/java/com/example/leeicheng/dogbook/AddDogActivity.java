@@ -22,6 +22,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,11 +35,16 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddDogActivity extends AppCompatActivity {
@@ -52,9 +58,9 @@ public class AddDogActivity extends AppCompatActivity {
     GeneralTask generalTask;
     Common common;
     Dog dog;
-    int ownerId, dogId;
+    int ownerId, age;
     int getPhotoId = 0;
-    String name, gender, variety, age, birthday;
+    String name, gender, variety ,birthday;
     private Uri contentUri, croppedImageUri;
     private static final int REQ_TAKE_PICTURE = 0;
     private static final int REQ_CROP_PICTURE = 1;
@@ -80,10 +86,8 @@ public class AddDogActivity extends AppCompatActivity {
     }
 
     void viewsControl() {
-        name = etName.getText().toString();
-        birthday = etBirthday.getText().toString();
-        age = etAge.getText().toString();
-        variety = "god dog";
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
 
 
         ivProfilePhoto.setOnClickListener(new View.OnClickListener() {
@@ -96,14 +100,16 @@ public class AddDogActivity extends AppCompatActivity {
         etBirthday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideKeyboard();
                 showDatePicker();
-                //TODO 傳到DB日期格式問題######################
+
             }
         });
 
         rgGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int item) {
+                hideKeyboard();
                 int select = rgGender.getCheckedRadioButtonId();
                 RadioButton radioButton = findViewById(select);
                 gender = radioButton.getText().toString();
@@ -115,6 +121,7 @@ public class AddDogActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 //TODO
+                hideKeyboard();
             }
 
             @Override
@@ -123,15 +130,26 @@ public class AddDogActivity extends AppCompatActivity {
             }
         });
 
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences pref = getSharedPreferences(common.PREF_FILE,
-                        MODE_PRIVATE);
-                ownerId = pref.getInt("ownerId", 0);
-                dog = new Dog(ownerId, name, gender, variety, age, birthday);
-                sendDogInfo(dog);
-                sendMedia();
+                name = etName.getText().toString();
+                birthday = etBirthday.getText().toString();
+                age = Integer.valueOf(etAge.getText().toString());
+                variety = "god";
+                ownerId = Common.getPreferencesOwnerId(getApplicationContext());
+                try {
+                    Date birthdayToDate = format.parse(birthday);
+                    dog = new Dog(ownerId, name, birthdayToDate, age, gender,variety );
+                    sendDogInfo(dog);
+                    show();
+                    sendMedia();
+                    finish();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -139,24 +157,19 @@ public class AddDogActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                onDestroy();
             }
         });
 
     }
-
-    int getPreferencesDogId() {
-        SharedPreferences pref = getSharedPreferences(Common.PREF_FILE,
-                MODE_PRIVATE);
-        int id = pref.getInt("dogId", 0);
-        return id;
+    void show(){
+        Log.d(TAG,"狗的ID = "+Common.getPreferencesDogId(this));
     }
 
-    void setPreferencesDogId(int id) {
-        SharedPreferences pref = getSharedPreferences(Common.PREF_FILE,
-                MODE_PRIVATE);
-        pref.edit().putInt("dogId", id).apply();
+    void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
+
 
     //設定Sipnner的item
     void setVarietySipnner() {
@@ -180,7 +193,7 @@ public class AddDogActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                etBirthday.setText(year + "/" + month + "/" + day);
+                etBirthday.setText(year + "-" + month + "-" + day);
             }
         }, year, month, day).show();
     }
@@ -257,7 +270,7 @@ public class AddDogActivity extends AppCompatActivity {
             byte[] image = Common.bitmapToPNG(photo);
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("status", "insert");
-            jsonObject.addProperty("dogId", getPreferencesDogId());
+            jsonObject.addProperty("dogId", Common.getPreferencesDogId(this));
             jsonObject.addProperty("media", Base64.encodeToString(image, Base64.DEFAULT));
             jsonObject.addProperty("type", 1);
             generalTask = new GeneralTask(url, jsonObject.toString());
@@ -275,16 +288,17 @@ public class AddDogActivity extends AppCompatActivity {
 
     void sendDogInfo(Dog dog) {
         if (Common.isNetworkConnect(this)) {
-            String url = common.URL + "/";
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            String url = common.URL + "/DogServlet";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("status", "insert");
-            jsonObject.addProperty("dog", new Gson().toJson(dog));
+            jsonObject.addProperty("dog", gson.toJson(dog));
 
             generalTask = new GeneralTask(url, jsonObject.toString());
             try {
                 String JsonIn = generalTask.execute().get();
                 jsonObject = new Gson().fromJson(JsonIn, JsonObject.class);
-                setPreferencesDogId(jsonObject.get("dogId").getAsInt());
+                Common.setPreferencesDogId(this,jsonObject.get("dogId").getAsInt());
 
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
