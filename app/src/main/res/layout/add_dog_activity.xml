@@ -8,6 +8,13 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfilePhoto"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:src="@drawable/ic_add"
+        style="@style/SignUp"/>
+
 
     <EditText
         android:id="@+id/etNameAddDog"
@@ -16,14 +23,16 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:layout_alignBottom="@id/ivProfilePhoto"
+        android:layout_toRightOf="@id/ivProfilePhoto"/>
 
     <LinearLayout
         android:id="@+id/llBirthday"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/etNameAddDog">
+        android:layout_below="@id/ivProfilePhoto">
 
         <EditText
 
@@ -50,12 +59,13 @@
     </LinearLayout>
 
     <RadioGroup
+        style="@style/SignUp"
         android:id="@+id/rgGenderAddDog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/llBirthday"
-        android:layout_alignLeft="@id/etNameAddDog">
+        android:layout_alignLeft="@id/ivProfilePhoto">
 
         <RadioButton
             android:id="@+id/rbHideAddDog"
@@ -81,14 +91,14 @@
     </RadioGroup>
 
     <Spinner
-        android:id="@+id/sVarietySignUp"
+        android:id="@+id/sVarietyAddDog"
         style="@style/SignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/rgGenderAddDog"/>
 
     <Button
-        android:id="@+id/btnAddSignUp"
+        android:id="@+id/btnAddDog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add"
@@ -105,7 +115,7 @@
         android:textAllCaps="false"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
-        android:layout_toLeftOf="@id/btnAddSignUp"/>
+        android:layout_toLeftOf="@id/btnAddDog"/>
 
 
 </RelativeLayout>

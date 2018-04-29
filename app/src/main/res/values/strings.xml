@@ -18,4 +18,11 @@
     <string name="female">Female</string>
     <string name="cancel">Cancel</string>
     <string name="add">ADD</string>
+    <string name="addDog">Add Dog</string>
+    <string name="signOut">Sign Out</string>
+    <string name="dogInfo">Dog Info</string>
+    <string name="takePicture">Take Picture</string>
+    <string name="choosePicture">Choose Picture</string>
+    <string name="changeProfilePhoto">Change Profile Photo</string>
+    <string name="changeBackgroundPhoto">Change Background Photo</string>
 </resources>

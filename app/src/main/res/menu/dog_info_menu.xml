@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/info"
+        android:title="@string/dogInfo" />
+    <item
+        android:id="@+id/changeProfilePhoto"
+        android:title="@string/changeProfilePhoto" />
+    <item
+        android:id="@+id/changeBackgroundPhoto"
+        android:title="@string/changeBackgroundPhoto" />
+    <item
+        android:id="@+id/signOut"
+        android:title="@string/signOut" />
+
+</menu>
