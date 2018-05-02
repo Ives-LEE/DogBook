@@ -32,12 +32,15 @@ import com.example.leeicheng.dogbook.activities.ActivitiesFragment;
 import com.example.leeicheng.dogbook.articles.ArticlesFragment;
 import com.example.leeicheng.dogbook.chats.ChatsFragment;
 import com.example.leeicheng.dogbook.friends.FriendsFragment;
+import com.example.leeicheng.dogbook.mydog.MyEventsActivity;
 
 import java.lang.reflect.Field;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnvMain;
-    TabLayout tlMain;
+    Toolbar tbMain;
+    TextView tvTitle;
+    ImageView ivLeft, ivRight;
     Context context;
 
     @Override
@@ -45,45 +48,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        findToolBarViews();
         findViews();
     }
-    //...
+
+    void findToolBarViews() {
+        tbMain = findViewById(R.id.tbMain);
+        setSupportActionBar(tbMain);
+        tvTitle = findViewById(R.id.tvTitle);
+        ivLeft = findViewById(R.id.ivLeftToolbar);
+        ivRight = findViewById(R.id.ivRightToolbar);
+    }
 
     void findViews() {
         getSupportFragmentManager().beginTransaction().replace(R.id.flMain, new MyDogFragment()).commit();
-        tlMain = findViewById(R.id.tlMain);
+        setToolbar(R.id.navMyDog);
         bnvMain = findViewById(R.id.bnvMain);
         disableShiftMode(bnvMain);
-
-        tlMain.addTab(tlMain.newTab().setText("所有活動"));
-        tlMain.addTab(tlMain.newTab().setText("我的活動"));
-        tlMain.addTab(tlMain.newTab().setText("即將參與"));
-
-        tlMain.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()){
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-
 
         bnvMain.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -91,23 +72,23 @@ public class MainActivity extends AppCompatActivity {
                 Fragment selectedFragment = null;
                 switch (item.getItemId()) {
                     case R.id.navMyDog:
-                        tlMain.setVisibility(View.GONE);
+                        setToolbar(R.id.navMyDog);
                         selectedFragment = new MyDogFragment();
                         break;
                     case R.id.navActivities:
-                        tlMain.setVisibility(View.VISIBLE);
+                        setToolbar(R.id.navActivities);
                         selectedFragment = new ActivitiesFragment();
                         break;
                     case R.id.navFriends:
-                        tlMain.setVisibility(View.GONE);
+                        setToolbar(R.id.navFriends);
                         selectedFragment = new FriendsFragment();
                         break;
                     case R.id.navChats:
-                        tlMain.setVisibility(View.GONE);
+                        setToolbar(R.id.navChats);
                         selectedFragment = new ChatsFragment();
                         break;
                     case R.id.navArticles:
-                        tlMain.setVisibility(View.GONE);
+                        setToolbar(R.id.navArticles);
                         selectedFragment = new ArticlesFragment();
                         break;
                 }
@@ -116,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @SuppressLint("RestrictedApi")
     public static void disableShiftMode(android.support.design.widget.BottomNavigationView view) {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
@@ -138,4 +120,57 @@ public class MainActivity extends AppCompatActivity {
             Log.e("BNVHelper", "Unable to change value of shift mode", e);
         }
     }
+
+    void setToolbar(int itemId) {
+        if (itemId == R.id.navMyDog) {
+            tvTitle.setText(R.string.myDog);
+            ivRight.setImageResource(R.drawable.ic_event_available_black_24dp);
+            ivRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), MyEventsActivity.class);
+                    startActivity(intent);
+                }
+            });
+        } else if (itemId == R.id.navActivities) {
+            tvTitle.setText(R.string.activities);
+            ivRight.setImageResource(0);
+            ivRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+        } else if (itemId == R.id.navFriends) {
+            tvTitle.setText(R.string.friends);
+            ivRight.setImageResource(0);
+            ivRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+        } else if (itemId == R.id.navChats) {
+            tvTitle.setText(R.string.chats);
+            ivRight.setImageResource(0);
+            ivRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+        } else if (itemId == R.id.navArticles) {
+            tvTitle.setText(R.string.article);
+            ivRight.setImageResource(0);
+            ivRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+        }
+    }
+
 }

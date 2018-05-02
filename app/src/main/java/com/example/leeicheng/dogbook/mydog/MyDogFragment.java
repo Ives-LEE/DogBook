@@ -59,19 +59,11 @@ public class MyDogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.mydog_fragment, container, false);
-        setToolBar(view);
         findViews(view);
 
         return view;
     }
-    void setToolBar(View view){
-        myDogToolbar = view.findViewById(R.id.tbMyDog);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(myDogToolbar);
-        tvTitle = view.findViewById(R.id.tvTitle);
-        ivCalendarToolbar = view.findViewById(R.id.ivCalendarToolbar);
-        tvTitle.setText(R.string.myDog);
-        toolBarViewsControl();
-    }
+
 
     void findViews(View view) {
         rvMyDog = view.findViewById(R.id.rvMyDog);
@@ -95,16 +87,6 @@ public class MyDogFragment extends Fragment {
         });
         rvMyDog.setLayoutManager(gridLayoutManager);
         rvMyDog.setAdapter(new MyDogAdapter(getActivity()));
-    }
-
-    void toolBarViewsControl(){
-        ivCalendarToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MyEventsActivity.class);
-                getActivity().startActivity(intent);
-            }
-        });
     }
 
     @Override
