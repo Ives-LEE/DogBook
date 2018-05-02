@@ -1,13 +1,31 @@
-package com.example.leeicheng.dogbook;
+package com.example.leeicheng.dogbook.owner;
 
 public class Owner {
+    private int id;
+    private String email, password;
 
-    private String email,password;
+    public Owner(int id) {
+        this.id = id;
+    }
 
     public Owner(String email, String password) {
         super();
         this.email = email;
         this.password = password;
+    }
+
+    public Owner(int id, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getEmail() {

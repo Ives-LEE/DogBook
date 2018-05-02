@@ -1,7 +1,6 @@
-package com.example.leeicheng.dogbook;
+package com.example.leeicheng.dogbook.owner;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import com.example.leeicheng.dogbook.R;
+import com.example.leeicheng.dogbook.main.Common;
+import com.example.leeicheng.dogbook.main.GeneralTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -56,6 +58,10 @@ public class SignUpFragment extends Fragment {
                 String password = etPassword.getText().toString();
 
                 if (isSignUp(email,password)){
+                    Log.d(TAG,"成功");
+                    Common.setPreferencesDogId(getActivity(),-1);
+                    Common.setPreferencesIsLogin(getActivity(),true);
+                    Log.d(TAG,Common.getPreferenceAll(getActivity()));
                     getActivity().finish();
                 } else {
                     Log.d(TAG,"失敗");
@@ -87,10 +93,9 @@ public class SignUpFragment extends Fragment {
     }
 
     boolean isSignUp(String email,String password){
-        Common common = new Common(getContext());
         boolean isSuccess = false;
-        if (common.isNetworkConnect()) {
-            String URL = common.URL + "/OwnerServlet";
+        if (Common.isNetworkConnect(getActivity())) {
+            String URL = Common.URL + "/OwnerServlet";
             Owner owner = new Owner(email,password);
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("status","signUp");
@@ -101,6 +106,7 @@ public class SignUpFragment extends Fragment {
             try {
                 String JsonIn = generalTask.execute().get();
                 jsonObject = new Gson().fromJson(JsonIn, JsonObject.class);
+                Common.setPreferencesOwnerId(getActivity(),jsonObject.get("ownerId").getAsInt());
                 isSuccess = jsonObject.get("isSignUp").getAsBoolean();
 
             } catch (InterruptedException e) {

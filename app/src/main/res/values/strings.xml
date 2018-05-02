@@ -25,4 +25,5 @@
     <string name="choosePicture">Choose Picture</string>
     <string name="changeProfilePhoto">Change Profile Photo</string>
     <string name="changeBackgroundPhoto">Change Background Photo</string>
+    <string name="calendar">Calendar</string>
 </resources>

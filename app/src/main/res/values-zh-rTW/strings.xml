@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">狗書</string>
+    <string name="myDog">我的狗</string>
+    <string name="activities">活動</string>
+    <string name="friends">好友</string>
+    <string name="article">動態</string>
+    <string name="chats">聊天</string>
+    <string name="email">E-mail</string>
+    <string name="password">密碼</string>
+    <string name="signIn">登入</string>
+    <string name="signUp">註冊</string>
+    <string name="name">名字</string>
+    <string name="birthday">生日</string>
+    <string name="age">年齡</string>
+    <string name="Hide">隱藏</string>
+    <string name="male">公</string>
+    <string name="female">母</string>
+    <string name="cancel">取消</string>
+    <string name="add">新增</string>
+    <string name="addDog">新增狗</string>
+    <string name="signOut">登出</string>
+    <string name="dogInfo">狗的資訊</string>
+    <string name="takePicture">拍照</string>
+    <string name="choosePicture">選擇相簿</string>
+    <string name="changeProfilePhoto">改變大頭貼</string>
+    <string name="changeBackgroundPhoto">改變封面照</string>
+    <string name="calendar">行事曆</string>
+</resources>

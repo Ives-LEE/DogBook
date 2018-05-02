@@ -156,7 +156,7 @@ public class AddDogActivity extends AppCompatActivity {
                 ownerId = Common.getPreferencesOwnerId(getApplicationContext());
                 try {
                     Date birthdayToDate = format.parse(birthday);
-                    dog = new Dog(ownerId, name, birthdayToDate, age, gender, variety);
+                    dog = new Dog(ownerId, name, gender, variety, age, birthdayToDate);
                     sendDogInfo(dog);
                     sendMedia();
                     finish();
@@ -320,7 +320,7 @@ public class AddDogActivity extends AppCompatActivity {
             String url = Common.URL + "/MediaServlet";
             byte[] image = Common.bitmapToPNG(photo);
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("status", "insert");
+            jsonObject.addProperty("status", Common.SET_PROFILE_PHOTO);
             jsonObject.addProperty("dogId", Common.getPreferencesDogId(this));
             jsonObject.addProperty("media", Base64.encodeToString(image, Base64.DEFAULT));
             jsonObject.addProperty("type", 1);
@@ -329,8 +329,7 @@ public class AddDogActivity extends AppCompatActivity {
                 String jsonIn = generalTask.execute().get();
                 JsonObject jObject = new Gson().fromJson(jsonIn, JsonObject.class);
 
-                getPhotoId = jObject.get("photoId").getAsInt();
-                Log.d(TAG, "id = " + getPhotoId);
+                Log.d(TAG, "成功 = " + jObject.get("isSuccess").getAsString());
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
@@ -343,7 +342,7 @@ public class AddDogActivity extends AppCompatActivity {
             Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
             String url = Common.URL + "/DogServlet";
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("status", "insert");
+            jsonObject.addProperty("status", Common.ADD_DOG);
             jsonObject.addProperty("dog", gson.toJson(dog));
 
             generalTask = new GeneralTask(url, jsonObject.toString());

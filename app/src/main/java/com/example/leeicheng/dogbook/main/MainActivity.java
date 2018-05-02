@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         findViews();
     }
-
+    //...
 
     void findViews() {
         getSupportFragmentManager().beginTransaction().replace(R.id.flMain, new MyDogFragment()).commit();

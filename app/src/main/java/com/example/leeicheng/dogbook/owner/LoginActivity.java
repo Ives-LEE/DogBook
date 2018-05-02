@@ -1,4 +1,4 @@
-package com.example.leeicheng.dogbook;
+package com.example.leeicheng.dogbook.owner;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.example.leeicheng.dogbook.R;
+import com.example.leeicheng.dogbook.main.Common;
+import com.example.leeicheng.dogbook.main.GeneralTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -32,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     void findViews() {
-        common = new Common(this);
         etEmail = findViewById(R.id.etEmailLogin);
         etPassword = findViewById(R.id.etPasswordLogin);
         btnSignIn = findViewById(R.id.btnSignInLogin);
@@ -48,17 +50,26 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
+                boolean isValid = true;
                 hideKeyboard();
+                if (email.equals("")) {
+                    etEmail.setError("E-mail is empty");
+                    isValid = false;
+                }
+                if (password.equals("")){
+                    etPassword.setError("Password is empty");
+                    isValid = false;
+                }
 
 
-                if (isLogin(email, password)) {
-                    SharedPreferences pref = getSharedPreferences(common.PREF_FILE,
+                if (isValid && isLogin(email, password)) {
+                    SharedPreferences pref = getSharedPreferences(Common.PREF_FILE,
                             MODE_PRIVATE);
                     pref.edit()
-                            .putBoolean("login", true)
                             .putString("email", email)
                             .putString("password", password)
                             .apply();
+
                     Log.d("設定",pref.getAll().toString());
                     finish();
                 }
@@ -92,11 +103,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     boolean isLogin(String email, String password) {
-        SharedPreferences pref = getSharedPreferences(common.PREF_FILE,
-                MODE_PRIVATE);
         boolean isLogin = false;
-        if (common.isNetworkConnect()) {
+        int ownerId = -1;
+        int dogId = -1;
+        if (common.isNetworkConnect(this)) {
             String URL = common.URL + "/OwnerServlet";
+
             Owner owner = new Owner(email,password);
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("status","signIn");
@@ -108,7 +120,11 @@ public class LoginActivity extends AppCompatActivity {
                 String JsonIn = generalTask.execute().get();
                 jsonObject = new Gson().fromJson(JsonIn, JsonObject.class);
                 isLogin = jsonObject.get("isLogin").getAsBoolean();
-                pref.edit().putInt("id",jsonObject.get("ownerId").getAsInt()).apply();
+                ownerId = jsonObject.get("ownerId").getAsInt();
+                dogId = jsonObject.get("dogId").getAsInt();
+                Common.setPreferencesIsLogin(this,isLogin);
+                Common.setPreferencesOwnerId(this,ownerId);
+                Common.setPreferencesDogId(this,dogId);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
