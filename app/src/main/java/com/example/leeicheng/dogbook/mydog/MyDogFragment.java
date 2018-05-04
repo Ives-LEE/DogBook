@@ -59,6 +59,7 @@ public class MyDogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.mydog_fragment, container, false);
+        Log.d(TAG,Common.getPreferenceAll(getActivity()).toString());
         findViews(view);
 
         return view;
@@ -271,9 +272,11 @@ public class MyDogFragment extends Fragment {
 
                 if (Common.getPreferencesIsLogin(context)) {
                     //登入後
-//                    dogMainViewHolder.getProfilePhoto();
-//                    dogMainViewHolder.getBackgroundPhoto();
-//                    dog = dogMainViewHolder.getDogInfo();
+                    if ((dog = dogMainViewHolder.getDogInfo()) != null){
+                        tvProfileInfo.setText(dog.getName());
+                    }
+                    dogMainViewHolder.getProfilePhoto();
+                    dogMainViewHolder.getBackgroundPhoto();
                     dogMainViewHolder.viewControlLogined();
                 } else {
                     //登入前
@@ -335,7 +338,6 @@ public class MyDogFragment extends Fragment {
             }
 
             void viewControlLogined() {
-//                tvProfileInfo.setText(dog.getName());
 
                 ivProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -396,13 +398,12 @@ public class MyDogFragment extends Fragment {
                         String info = generalTask.execute().get();
                         gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
                         dog = gson.fromJson(info, Dog.class);
-                        Log.d("", "info = " + info + "dog = " + dog.toString());
+//                        Log.d("", "info = " + info + "dog = " + dog.toString());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-
                 }
                 return dog;
             }
