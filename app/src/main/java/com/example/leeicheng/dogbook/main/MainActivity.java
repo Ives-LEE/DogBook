@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.leeicheng.dogbook.articles.AddArticleActivity;
 import com.example.leeicheng.dogbook.mydog.MyDogFragment;
 import com.example.leeicheng.dogbook.R;
 import com.example.leeicheng.dogbook.activities.ActivitiesFragment;
@@ -162,11 +163,12 @@ public class MainActivity extends AppCompatActivity {
             });
         } else if (itemId == R.id.navArticles) {
             tvTitle.setText(R.string.article);
-            ivRight.setImageResource(0);
+            ivRight.setImageResource(R.drawable.ic_photo_filter_black_24dp);
             ivRight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    Intent intent = new Intent(getApplicationContext(), AddArticleActivity.class);
+                    startActivity(intent);
                 }
             });
 

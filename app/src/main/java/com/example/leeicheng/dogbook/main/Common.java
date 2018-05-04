@@ -18,6 +18,7 @@ public class Common {
     public static final int REQ_CHOOSE_BACKGROUND_PICTURE = 2;
     public static final int REQ_CROP_PROFILE_PICTURE = 3;
     public static final int REQ_CROP_BACKGROUND_PICTURE = 4;
+    public static final int REQ_CHOOSE_PICTURE = 5;
     public static final String PROFILE_PHOTO = "profilePhoto";
     public static final String BACKGROUND_PHOTO = "backgroundPhoto";
     public final static String URL = "http://10.0.2.2:8080/DogBookServlet";
@@ -30,6 +31,10 @@ public class Common {
     public final static String SET_PROFILE_PHOTO = "setProfilePhoto";
     public final static String GET_PROFILE_BACKGROUND_PHOTO = "getProfileBackgroundPhoto";
     public final static String SET_PROFILE_BACKGROUND_PHOTO = "setProfileBackgroundPhoto";
+    public final static String SET_ARTICLE_PHOTO = "setArticlePhoto";
+    public final static String CREATE_ARTICLE = "createArticle";
+    public final static String GET_ARTICLES = "getArticles";
+
 
 
     public static boolean isNetworkConnect(Context context) {

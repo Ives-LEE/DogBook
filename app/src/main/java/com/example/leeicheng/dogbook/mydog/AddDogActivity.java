@@ -100,9 +100,9 @@ public class AddDogActivity extends AppCompatActivity {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        if (menuItem.getTitle().equals(TAKE_PICTURE)) {
+                        if (menuItem.getItemId() == R.id.takePicture) {
                             takePicture();
-                        } else if (menuItem.getTitle().equals(CHOOSE_PICTURE)) {
+                        } else if (menuItem.getItemId() == R.id.choosePicture) {
                             choosePicture(Common.REQ_CHOOSE_PROFILE_PICTURE);
                         }
                         return true;

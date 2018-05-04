@@ -33,6 +33,7 @@
         <activity android:name=".owner.LoginActivity"></activity>
         <activity android:name=".mydog.AddDogActivity"></activity>
         <activity android:name=".mydog.MyEventsActivity"></activity>
+        <activity android:name=".articles.AddArticleActivity"></activity>
     </application>
 
 </manifest>

@@ -26,4 +26,7 @@
     <string name="changeProfilePhoto">Change Profile Photo</string>
     <string name="changeBackgroundPhoto">Change Background Photo</string>
     <string name="calendar">Calendar</string>
+    <string name="addPicture">choose / take picture</string>
+    <string name="saySomething">Say Something</string>
+    <string name="addArticle">Add Article</string>
 </resources>

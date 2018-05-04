@@ -9,8 +9,8 @@ import java.util.Date;
 
 public class Dog {
 
-//    @Expose(deserialize = true,serialize = true)
-//    @SerializedName("owner")
+    @Expose(deserialize = true,serialize = true)
+    @SerializedName("owner")
     private int ownerId;
 
     private int dogId;
