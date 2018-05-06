@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.leeicheng.dogbook.R;
+import com.example.leeicheng.dogbook.articles.Article;
 import com.example.leeicheng.dogbook.main.Common;
 import com.example.leeicheng.dogbook.main.GeneralTask;
 import com.example.leeicheng.dogbook.media.MediaTask;
@@ -36,9 +37,11 @@ import com.example.leeicheng.dogbook.owner.LoginActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -54,12 +57,13 @@ public class MyDogFragment extends Fragment {
     GeneralTask generalTask;
     Dog dog;
     Toolbar myDogToolbar;
+    List<Article> myArticles;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.mydog_fragment, container, false);
-        Log.d(TAG,Common.getPreferenceAll(getActivity()).toString());
+        Log.d(TAG, Common.getPreferenceAll(getActivity()).toString());
         findViews(view);
 
         return view;
@@ -244,7 +248,7 @@ public class MyDogFragment extends Fragment {
         final String SIGN_OUT = "Sign Out";
         final String CHANGE_DOG_PROFILE_PHOTO = "Change Profile Photo";
         final String CHANGE_DOG_BACKGROUND_PHOTO = "Change Background Photo";
-
+        List<Article> myArticles;
         private Context context;
         Activity activity;
 
@@ -256,6 +260,8 @@ public class MyDogFragment extends Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
+            myArticles = getMyArticles();
+
             if (viewType == 0) {
                 View itemView = layoutInflater.inflate(R.layout.mydog_main_item, parent, false);
                 return new DogMainViewHolder(itemView);
@@ -272,7 +278,7 @@ public class MyDogFragment extends Fragment {
 
                 if (Common.getPreferencesIsLogin(context)) {
                     //登入後
-                    if ((dog = dogMainViewHolder.getDogInfo()) != null){
+                    if ((dog = dogMainViewHolder.getDogInfo()) != null) {
                         tvProfileInfo.setText(dog.getName());
                     }
                     dogMainViewHolder.getProfilePhoto();
@@ -284,23 +290,29 @@ public class MyDogFragment extends Fragment {
                 }
 
             } else {
-                ArticlesViewHolder articlesViewHolder = (ArticlesViewHolder) holder;
+                if (Common.getPreferencesIsLogin(context)) {
+                    ArticlesViewHolder articlesViewHolder = (ArticlesViewHolder) holder;
+                    Article article = myArticles.get(position - 1);
+                    getMedia(article.getMediaId(), articlesViewHolder.ivArticle);
 
-                articlesViewHolder.ivArticle.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, "這是 = " + position, Toast.LENGTH_SHORT).show();
+                    articlesViewHolder.ivArticle.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(context, "這是 = " + position, Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-
+                        }
+                    });
+                }
             }
         }
 
         @Override
         public int getItemCount() {
-            //TODO 文章列表 必 >= 1
-            return 2;
+            if (myArticles != null) {
+                return myArticles.size() + 1;
+            } else {
+                return 1;
+            }
         }
 
         @Override
@@ -413,7 +425,7 @@ public class MyDogFragment extends Fragment {
                 int dogId = Common.getPreferencesDogId(context);
                 if (Common.isNetworkConnect(context)) {
                     String url = Common.URL + "/MediaServlet";
-                    mediaTask = new MediaTask(url, dogId, photoSize, ivProfile, Common.GET_PROFILE_PHOTO);
+                    mediaTask = new MediaTask(url, dogId, photoSize, ivProfile, Common.GET_PROFILE_PHOTO, "dog");
                     try {
                         mediaTask.execute();
                     } catch (Exception e) {
@@ -427,7 +439,7 @@ public class MyDogFragment extends Fragment {
                 int dogId = Common.getPreferencesDogId(context);
                 if (Common.isNetworkConnect(context)) {
                     String url = Common.URL + "/MediaServlet";
-                    mediaTask = new MediaTask(url, dogId, photoSize, ivProfileBackground, Common.GET_PROFILE_BACKGROUND_PHOTO);
+                    mediaTask = new MediaTask(url, dogId, photoSize, ivProfileBackground, Common.GET_PROFILE_BACKGROUND_PHOTO, "dog");
                     try {
                         mediaTask.execute();
                     } catch (Exception e) {
@@ -453,5 +465,44 @@ public class MyDogFragment extends Fragment {
             Intent intent = new Intent(context, LoginActivity.class);
             context.startActivity(intent);
         }
+
+        List<Article> getMyArticles() {
+            List<Article> articles = null;
+            int dogId = Common.getPreferencesDogId(getActivity());
+            if (Common.isNetworkConnect(getActivity())) {
+                String url = Common.URL + "/ArticleServlet";
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("status", Common.GET_MY_ARTICLES);
+                jsonObject.addProperty("dogId", dogId);
+                generalTask = new GeneralTask(url, jsonObject.toString());
+
+                try {
+                    String jsonIn = generalTask.execute().get();
+                    Type type = new TypeToken<List<Article>>() {
+                    }.getType();
+                    articles = new Gson().fromJson(jsonIn, type);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return articles;
+        }
+
+        void getMedia(int MediaId, ImageView imageView) {
+            int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
+            if (Common.isNetworkConnect(getActivity())) {
+                String url = Common.URL + "/MediaServlet";
+                mediaTask = new MediaTask(url, MediaId, photoSize, imageView, Common.GET_ARTICLES, "media");
+                try {
+                    mediaTask.execute();
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
+            }
+        }
     }
+
 }

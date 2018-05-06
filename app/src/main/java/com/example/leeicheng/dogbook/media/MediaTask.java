@@ -20,7 +20,7 @@ import java.net.URL;
 public class MediaTask extends AsyncTask<Object, Integer, Bitmap> {
     int CONNECT_SUCCESS = 200;
     private final static String TAG = "取得多媒體";
-    private String url,status;
+    private String url,status,kindOfId;
     private int id, imageSize;
     private WeakReference<ImageView> imageViewWeakReference;
 
@@ -31,12 +31,13 @@ public class MediaTask extends AsyncTask<Object, Integer, Bitmap> {
         this.imageViewWeakReference = null;
     }
 
-    public MediaTask(String url, int id, int imageSize, ImageView imageViewWeakReference , String status) {
+    public MediaTask(String url, int id, int imageSize, ImageView imageViewWeakReference , String status,String kindOfId) {
         this.url = url;
         this.id = id;
         this.imageSize = imageSize;
         this.imageViewWeakReference = new WeakReference<>(imageViewWeakReference);
         this.status = status;
+        this.kindOfId = kindOfId;
     }
 
     @Override
@@ -58,9 +59,18 @@ public class MediaTask extends AsyncTask<Object, Integer, Bitmap> {
             jsonObject.addProperty("status", Common.GET_PROFILE_PHOTO);
         } else if(status.equals(Common.GET_PROFILE_BACKGROUND_PHOTO)) {
             jsonObject.addProperty("status", Common.GET_PROFILE_BACKGROUND_PHOTO);
+        } else if (status.equals(Common.GET_ARTICLES)){
+            jsonObject.addProperty("status", Common.GET_ARTICLES);
+        } else if(status.equals(Common.GET_MY_ARTICLES)){
+            jsonObject.addProperty("status", Common.GET_MY_ARTICLES);
         }
 
-        jsonObject.addProperty("dogId", id);
+        if (kindOfId.equals("dog")){
+            jsonObject.addProperty("dogId", id);
+        } else if (kindOfId.equals("media")){
+            jsonObject.addProperty("mediaId", id);
+        }
+
         jsonObject.addProperty("imageSize", imageSize);
         return getRemoteMedia(url, jsonObject.toString());
     }

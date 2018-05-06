@@ -21,16 +21,17 @@
             android:paddingTop="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profilePhoto"
+                android:id="@+id/civProfilePhoto"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/dog05" />
 
             <TextView
+                android:id="@+id/tvPosterName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/profilePhoto"
+                android:layout_toEndOf="@+id/civProfilePhoto"
                 android:paddingLeft="10dp"
                 android:text="@string/app_name"
                 android:textSize="16sp" />
@@ -59,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/rlTop"
+            android:layout_margin="10dp"
             android:layout_centerHorizontal="true"/>
 
         <ImageView

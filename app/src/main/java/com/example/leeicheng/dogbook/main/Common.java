@@ -34,6 +34,7 @@ public class Common {
     public final static String SET_ARTICLE_PHOTO = "setArticlePhoto";
     public final static String CREATE_ARTICLE = "createArticle";
     public final static String GET_ARTICLES = "getArticles";
+    public final static String GET_MY_ARTICLES = "getMyArticles";
 
 
 
