@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:elevation="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civFriendProfilePhoto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/dog05" />
+
+        <TextView
+            android:id="@+id/tvChatsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/civFriendProfilePhoto"
+            android:text="我朋友"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tvLastChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvChatsTitle"
+            android:layout_toEndOf="@id/civFriendProfilePhoto"
+            android:paddingTop="10dp"
+            android:text="帶我的狗去美國打預防針" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

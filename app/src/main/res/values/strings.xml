@@ -29,4 +29,5 @@
     <string name="addPicture">choose / take picture</string>
     <string name="saySomething">Say Something</string>
     <string name="addArticle">Add Article</string>
+    <string name="submit">Submit</string>
 </resources>
