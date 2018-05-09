@@ -1,14 +1,18 @@
 package com.example.leeicheng.dogbook.chats;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -20,51 +24,115 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.leeicheng.dogbook.R;
 import com.example.leeicheng.dogbook.articles.Article;
 import com.example.leeicheng.dogbook.main.Common;
 import com.example.leeicheng.dogbook.main.GeneralTask;
+import com.example.leeicheng.dogbook.media.MediaTask;
+import com.example.leeicheng.dogbook.mydog.Dog;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class ChatroomActivity extends AppCompatActivity {
     TextView tvTitleChatroom;
+    EditText etInput;
     ImageView ivLeftToolbar;
     RecyclerView rvChats;
+    Button btnSubmit;
+    Toolbar tbChatroom;
+    int friendId, roomId;
+    GeneralTask generalTask;
+    Dog dog;
+    MediaTask mediaTask;
+    String TAG = "聊天室";
+    LocalBroadcastManager broadcastManager;
+
+    List<Chat> chats;
+    ChatsAdapter chatsAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chatsroom_activity);
+
+        broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        registerChatReceiver();
+
+        getFriend();
+        chats = getChatsRecoding(roomId);
+        findToolBarViews();
         findViews();
     }
 
-    void findViews() {
+    void getFriend() {
+        Bundle bundle = getIntent().getExtras();
+        friendId = bundle.getInt("friendId");
+        roomId = bundle.getInt("roomId");
+        Common.room = roomId;
+        dog = getDogInfo(friendId);
+    }
+
+    void findToolBarViews() {
         tvTitleChatroom = findViewById(R.id.tvTitleChatroom);
         ivLeftToolbar = findViewById(R.id.ivLeftToolbarChatroom);
+        toolbarViewControl();
+    }
+
+    void toolbarViewControl() {
+        if (dog != null) {
+            tvTitleChatroom.setText(dog.getName());
+        }
+        ivLeftToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    void findViews() {
         rvChats = findViewById(R.id.rvChats);
+        btnSubmit = findViewById(R.id.btnSubmit);
+        etInput = findViewById(R.id.etInput);
         viewsControl();
     }
 
     void viewsControl() {
-        rvChats.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-        rvChats.setAdapter(new ChatsAdapter());
+
+        rvChats.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        chatsAdapter = new ChatsAdapter();
+        rvChats.setAdapter(chatsAdapter);
+        rvChats.scrollToPosition(chatsAdapter.getItemCount() - 1);
         rvChats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 hideKeyboard();
             }
         });
-
-        ivLeftToolbar.setOnClickListener(new View.OnClickListener() {
+        etInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+//                rvChats.scrollToPosition(chatsAdapter.getItemCount()-1);
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submit();
             }
         });
     }
@@ -74,29 +142,174 @@ public class ChatroomActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
+    void registerChatReceiver() {
+        IntentFilter chatFilter = new IntentFilter("chat");
+        ChatReceiver chatReceiver = new ChatReceiver();
+        broadcastManager.registerReceiver(chatReceiver, chatFilter);
+    }
 
-    private class ChatsAdapter extends RecyclerView.Adapter {
+    private class ChatReceiver extends BroadcastReceiver {
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Chat chat = new Gson().fromJson(message, Chat.class);
+            int sender = chat.getSenderId();
+
+            if (sender == friendId) {
+                chats.add(chat);
+                chatsAdapter.notifyDataSetChanged();
+                rvChats.scrollToPosition(chatsAdapter.getItemCount() - 1);
+
+            }
+        }
+    }
+
+    void submit() {
+
+        int dogId = Common.getPreferencesDogId(this);
+        String message = etInput.getText().toString();
+        if (message.trim().isEmpty()) {
+            Toast.makeText(this, R.string.messageEmpty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        etInput.setText(null);
+        Chat chat = new Chat(dogId, roomId, message, "chat");
+        String chatJson = new Gson().toJson(chat);
+        Common.chatWebSocketClient.send(chatJson);
+        Log.d(TAG, "output: " + chatJson);
+        chats.add(chat);
+        chatsAdapter.notifyDataSetChanged();
+        rvChats.scrollToPosition(chatsAdapter.getItemCount() - 1);
+
+    }
+
+
+    private class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ChatsItemViewHolder> {
+        View view;
+
+        @Override
+        public ChatsItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = getLayoutInflater();
-            View view = inflater.inflate(R.layout.chats_item,parent,false);
+            view = inflater.inflate(R.layout.chats_item, parent, false);
             return new ChatsItemViewHolder(view);
         }
 
+
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(ChatsItemViewHolder holder, int position) {
+            Chat chat = chats.get(position);
+            int sender = chat.getSenderId();
+
+            if (sender != friendId) {
+                RelativeLayout.LayoutParams layoutParams =
+                        (RelativeLayout.LayoutParams) holder.cvChatBubble.getLayoutParams();
+                layoutParams.removeRule(RelativeLayout.END_OF);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+                holder.cvChatBubble.setLayoutParams(layoutParams);
+                holder.civFriendProfilePhoto.setVisibility(View.INVISIBLE);
+                holder.tvChat.setText(chat.getMessage());
+            } else {
+                RelativeLayout.LayoutParams layoutParams =
+                        (RelativeLayout.LayoutParams) holder.cvChatBubble.getLayoutParams();
+                layoutParams.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                layoutParams.addRule(RelativeLayout.END_OF, R.id.civFriendProfilePhotoChat);
+                holder.cvChatBubble.setLayoutParams(layoutParams);
+                holder.civFriendProfilePhoto.setVisibility(View.VISIBLE);
+                getProfilePhoto(friendId, holder.civFriendProfilePhoto);
+                holder.tvChat.setText(chat.getMessage());
+            }
 
         }
 
         @Override
         public int getItemCount() {
-            return 3;
+            return chats.size();
         }
 
-        private class ChatsItemViewHolder extends RecyclerView.ViewHolder {
+        public class ChatsItemViewHolder extends RecyclerView.ViewHolder {
+            ImageView civFriendProfilePhoto;
+            TextView tvChat;
+            RelativeLayout rlChats;
+            CardView cvChatBubble;
+
             public ChatsItemViewHolder(View view) {
                 super(view);
+                rlChats = view.findViewById(R.id.rlChats);
+                civFriendProfilePhoto = view.findViewById(R.id.civFriendProfilePhotoChat);
+                tvChat = view.findViewById(R.id.tvChat);
+                cvChatBubble = view.findViewById(R.id.cvChatBubble);
             }
         }
     }
+
+
+    Dog getDogInfo(int dogId) {
+        Gson gson = new GsonBuilder().create();
+        Dog dog = null;
+        if (Common.isNetworkConnect(this)) {
+            String url = Common.URL + "/DogServlet";
+            JsonObject jsonObject = new JsonObject();
+            dog = new Dog(dogId);
+
+            jsonObject.addProperty("status", Common.GET_DOG_INFO);
+            jsonObject.addProperty("dog", gson.toJson(dog));
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                String info = generalTask.execute().get();
+                gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+                dog = gson.fromJson(info, Dog.class);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return dog;
+    }
+
+    void getProfilePhoto(int dogId, ImageView imageView) {
+        int photoSize = getResources().getDisplayMetrics().widthPixels / 4;
+        if (Common.isNetworkConnect(this)) {
+            String url = Common.URL + "/MediaServlet";
+            mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_PHOTO, "dog");
+            try {
+                mediaTask.execute();
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+        }
+    }
+
+    List<Chat> getChatsRecoding(int roomId) {
+        List<Chat> chats = null;
+        if (Common.isNetworkConnect(getApplicationContext())) {
+            String url = Common.URL + "/ChatServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("status", Common.GET_CHATS_RECODING);
+            jsonObject.addProperty("roomId", roomId);
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                String jsonIn = generalTask.execute().get();
+                Type type = new TypeToken<List<Chat>>() {
+                }.getType();
+                chats = new Gson().fromJson(jsonIn, type);
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return chats;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        chats.clear();
+        Common.room = -1;
+    }
+
+
 }

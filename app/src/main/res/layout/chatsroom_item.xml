@@ -14,25 +14,22 @@
             android:id="@+id/civFriendProfilePhoto"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/dog05" />
+            android:layout_marginRight="10dp" />
 
         <TextView
-            android:id="@+id/tvChatsTitle"
+            android:id="@+id/tvChatsFriend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/civFriendProfilePhoto"
-            android:text="我朋友"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tvLastChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvChatsTitle"
+            android:layout_below="@id/tvChatsFriend"
             android:layout_toEndOf="@id/civFriendProfilePhoto"
-            android:paddingTop="10dp"
-            android:text="帶我的狗去美國打預防針" />
+            android:paddingTop="10dp" />
 
     </RelativeLayout>
 

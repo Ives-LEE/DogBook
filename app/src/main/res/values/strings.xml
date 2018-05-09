@@ -30,4 +30,6 @@
     <string name="saySomething">Say Something</string>
     <string name="addArticle">Add Article</string>
     <string name="submit">Submit</string>
+    <string name="text_MessageEmpty">Message is Empty</string>
+    <string name="messageEmpty">Message is Empty</string>
 </resources>

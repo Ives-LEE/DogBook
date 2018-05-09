@@ -69,13 +69,13 @@ public class ArticlesFragment extends Fragment {
         @Override
         public void onBindViewHolder(ArticleViewHolder holder, int position) {
             Article article = articles.get(position);
-            if ((dog = getDogInfo(article.getDogId())) != null){
+            if ((dog = getDogInfo(article.getDogId())) != null) {
                 holder.tvPosterName.setText(dog.getName());
             }
-            if (article != null){
+            if (article != null) {
                 holder.tvArticleContent.setText(article.getContent());
-                getProfilePhoto(article.getDogId(),holder.civProfilePhoto);
-                getMedia(article.getMediaId(),holder.ivArticlePhoto);
+                getProfilePhoto(article.getDogId(), holder.civProfilePhoto);
+                getMedia(article.getMediaId(), holder.ivArticlePhoto);
             }
         }
 
@@ -85,13 +85,15 @@ public class ArticlesFragment extends Fragment {
         }
 
         public class ArticleViewHolder extends RecyclerView.ViewHolder {
-            ImageView civProfilePhoto , ivLike,ivArticlePhoto;
-            TextView tvPosterName,likesCount,tvArticleContent;
+            ImageView civProfilePhoto, ivLike, ivArticlePhoto;
+            TextView tvPosterName, likesCount, tvArticleContent;
+
             public ArticleViewHolder(View view) {
                 super(view);
                 findViews(view);
             }
-            void findViews(View view){
+
+            void findViews(View view) {
                 civProfilePhoto = view.findViewById(R.id.civProfilePhoto);
                 ivLike = view.findViewById(R.id.ivLike);
                 ivArticlePhoto = view.findViewById(R.id.ivArticlePhoto);
@@ -104,6 +106,7 @@ public class ArticlesFragment extends Fragment {
 
 
     }
+
     Dog getDogInfo(int dogId) {
         Gson gson = new GsonBuilder().create();
         Dog dog = null;
@@ -130,11 +133,11 @@ public class ArticlesFragment extends Fragment {
         return dog;
     }
 
-    void getMedia(int MediaId,ImageView imageView) {
+    void getMedia(int MediaId, ImageView imageView) {
         int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
         if (Common.isNetworkConnect(getActivity())) {
             String url = Common.URL + "/MediaServlet";
-            mediaTask = new MediaTask(url, MediaId, photoSize, imageView, Common.GET_ARTICLES,"media");
+            mediaTask = new MediaTask(url, MediaId, photoSize, imageView, Common.GET_ARTICLES, "media");
             try {
                 mediaTask.execute();
             } catch (Exception e) {
@@ -143,11 +146,11 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
-    void getProfilePhoto(int dogId,ImageView imageView) {
+    void getProfilePhoto(int dogId, ImageView imageView) {
         int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
         if (Common.isNetworkConnect(getActivity())) {
             String url = Common.URL + "/MediaServlet";
-            mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_PHOTO,"dog");
+            mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_PHOTO, "dog");
             try {
                 mediaTask.execute();
             } catch (Exception e) {
@@ -163,13 +166,14 @@ public class ArticlesFragment extends Fragment {
             String url = Common.URL + "/ArticleServlet";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("status", Common.GET_ARTICLES);
-            jsonObject.addProperty("dogId",dogId);
+            jsonObject.addProperty("dogId", dogId);
             generalTask = new GeneralTask(url, jsonObject.toString());
 
             try {
                 String jsonIn = generalTask.execute().get();
-                Type type = new TypeToken<List<Article>>(){}.getType();
-                articles = new Gson().fromJson(jsonIn,type);
+                Type type = new TypeToken<List<Article>>() {
+                }.getType();
+                articles = new Gson().fromJson(jsonIn, type);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -179,6 +183,4 @@ public class ArticlesFragment extends Fragment {
         }
         return articles;
     }
-
-
 }

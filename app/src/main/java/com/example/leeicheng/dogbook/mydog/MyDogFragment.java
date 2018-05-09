@@ -52,12 +52,11 @@ public class MyDogFragment extends Fragment {
     GridLayoutManager gridLayoutManager;
     private Uri croppedImageUri;
     static Bitmap photo;
-    ImageView ivProfile, ivProfileBackground, ivCalendarToolbar;
-    TextView tvProfileInfo, tvTitle;
+    ImageView ivProfile, ivProfileBackground;
+    TextView tvProfileInfo;
     GeneralTask generalTask;
     Dog dog;
-    Toolbar myDogToolbar;
-    List<Article> myArticles;
+
 
     @Nullable
     @Override

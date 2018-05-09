@@ -6,7 +6,17 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+
+import com.example.leeicheng.dogbook.chats.ChatWebSocketClient;
+import com.example.leeicheng.dogbook.mydog.Dog;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by leeicheng on 2018/4/22.
@@ -19,6 +29,8 @@ public class Common {
     public static final int REQ_CROP_PROFILE_PICTURE = 3;
     public static final int REQ_CROP_BACKGROUND_PICTURE = 4;
     public static final int REQ_CHOOSE_PICTURE = 5;
+    public final static int NOTIFICATION_ID = 0;
+
     public static final String PROFILE_PHOTO = "profilePhoto";
     public static final String BACKGROUND_PHOTO = "backgroundPhoto";
     public final static String URL = "http://10.0.2.2:8080/DogBookServlet";
@@ -35,7 +47,37 @@ public class Common {
     public final static String CREATE_ARTICLE = "createArticle";
     public final static String GET_ARTICLES = "getArticles";
     public final static String GET_MY_ARTICLES = "getMyArticles";
+    public final static String SHOW_ROOMS = "showRooms";
+    public final static String GET_CHATS_RECODING = "getChatsRecoding";
+    public final static String GET_LAST_CHAT = "getLastChat";
+    public final static String GET_ROOM_DOGS = "getRoomDogs";
 
+
+    public static String SERVER_URI = "ws://10.0.2.2:8080/DogBookServlet/ChatWebSocketServer/";
+    public static int room = -1;
+    public static ChatWebSocketClient chatWebSocketClient;
+
+
+    public static void connectServer(Context context, int dogId) {
+        URI uri = null;
+        try {
+            uri = new URI(SERVER_URI + dogId);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        if (chatWebSocketClient == null) {
+            chatWebSocketClient = new ChatWebSocketClient(uri, context);
+            chatWebSocketClient.connect();
+        }
+    }
+
+    public static void disconnectServer() {
+        if (chatWebSocketClient != null) {
+            chatWebSocketClient.close();
+            chatWebSocketClient = null;
+        }
+
+    }
 
 
     public static boolean isNetworkConnect(Context context) {
@@ -44,19 +86,19 @@ public class Common {
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    public static byte[] bitmapToPNG(Bitmap srcBitmap){
+    public static byte[] bitmapToPNG(Bitmap srcBitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        srcBitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
+        srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
-    public static String getPreferenceAll(Context context){
+    public static String getPreferenceAll(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
                 context.MODE_PRIVATE);
         return pref.getAll().toString();
     }
 
-    public static void setPreferenceClear(Context context){
+    public static void setPreferenceClear(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
                 context.MODE_PRIVATE);
         pref.edit().clear().commit();
@@ -99,6 +141,33 @@ public class Common {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
                 context.MODE_PRIVATE);
         pref.edit().putBoolean("isLogin", isLogin).apply();
+    }
+
+    public static Dog getDogInfo(int dogId,Context context) {
+        Gson gson = new GsonBuilder().create();
+        Dog dog = null;
+        GeneralTask generalTask;
+        if (Common.isNetworkConnect(context)) {
+            String url = Common.URL + "/DogServlet";
+            JsonObject jsonObject = new JsonObject();
+            dog = new Dog(dogId);
+
+            jsonObject.addProperty("status", Common.GET_DOG_INFO);
+            jsonObject.addProperty("dog", gson.toJson(dog));
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                String info = generalTask.execute().get();
+                gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+                dog = gson.fromJson(info, Dog.class);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return dog;
     }
 
 

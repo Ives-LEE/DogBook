@@ -1,57 +1,193 @@
 package com.example.leeicheng.dogbook.main;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.leeicheng.dogbook.articles.AddArticleActivity;
-import com.example.leeicheng.dogbook.mydog.MyDogFragment;
 import com.example.leeicheng.dogbook.R;
 import com.example.leeicheng.dogbook.activities.ActivitiesFragment;
+import com.example.leeicheng.dogbook.articles.AddArticleActivity;
 import com.example.leeicheng.dogbook.articles.ArticlesFragment;
+import com.example.leeicheng.dogbook.chats.Chat;
+import com.example.leeicheng.dogbook.chats.ChatroomActivity;
 import com.example.leeicheng.dogbook.chats.ChatsFragment;
 import com.example.leeicheng.dogbook.friends.FriendsFragment;
+import com.example.leeicheng.dogbook.mydog.Dog;
+import com.example.leeicheng.dogbook.mydog.MyDogFragment;
 import com.example.leeicheng.dogbook.mydog.MyEventsActivity;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bnvMain;
     Toolbar tbMain;
     TextView tvTitle;
     ImageView ivLeft, ivRight;
-    Context context;
+    ChatService chatService;
+    LocalBroadcastManager broadcastManager;
+    NotificationManager notificationManager;
+    NotificationChannel chatChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = this;
+        chatNotificationManager();
         findToolBarViews();
         findViews();
+        startService();
+
     }
+
+    void chatNotificationManager(){
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            chatChannel = new NotificationChannel("chat","message",NotificationManager.IMPORTANCE_DEFAULT);
+            chatChannel.setDescription("message");
+            chatChannel.enableLights(true);
+            chatChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(chatChannel);
+        }
+
+    }
+
+    void startService() {
+        Intent intent = new Intent(this, ChatService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        Context context;
+        int dogId;
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            if (Common.getPreferencesIsLogin(getApplicationContext())) {
+                context = getApplicationContext();
+                broadcastManager = LocalBroadcastManager.getInstance(context);
+                chatService = ((ChatService.ServiceBinder) iBinder).getService();
+                dogId = Common.getPreferencesDogId(context);
+                Common.connectServer(context, dogId);
+                registerChatReceiver();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            chatService = null;
+        }
+
+        void registerChatReceiver() {
+            IntentFilter chatFilter = new IntentFilter("chat");
+            ChatReceiver chatReceiver = new ChatReceiver();
+            broadcastManager.registerReceiver(chatReceiver, chatFilter);
+        }
+
+        class ChatReceiver extends BroadcastReceiver {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (Common.room == -1) {
+                    String message = intent.getStringExtra("message");
+                    Chat chat = new Gson().fromJson(message, Chat.class);
+                    int room = chat.getChatroomId();
+                    int receiver = getReceiver(room,chat.getSenderId());
+
+                    if (receiver == Common.getPreferencesDogId(context)){
+                        sendNotification(chat);
+                    }
+                }
+
+            }
+        }
+
+        void sendNotification(Chat chat) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("friendId",chat.getSenderId());
+            bundle.putInt("roomId",chat.getChatroomId());
+            Intent intent = new Intent(getApplicationContext(), ChatroomActivity.class);
+            intent.putExtras(bundle);
+
+            Dog dog = Common.getDogInfo(chat.getSenderId(), getApplicationContext());
+
+            PendingIntent pendingIntent =
+                    PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+            Notification notification = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                notification = new Notification.Builder(getApplicationContext())
+                        .setContentTitle(dog.getName())
+                        .setContentText(chat.getMessage())
+                        .setSmallIcon(android.R.drawable.ic_dialog_email)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setChannelId("chat")
+                        .build();
+            }
+
+            notificationManager.notify(Common.NOTIFICATION_ID, notification);
+        }
+
+        int getReceiver(int roomId,int senderId) {
+            GeneralTask generalTask;
+            int receiver = 0;
+            List<Integer> dogsId = null;
+            if (Common.isNetworkConnect(getApplicationContext())) {
+                String url = Common.URL + "/ChatServlet";
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("status", Common.GET_ROOM_DOGS);
+                jsonObject.addProperty("roomId", roomId);
+                generalTask = new GeneralTask(url, jsonObject.toString());
+
+                try {
+                    String jsonIn = generalTask.execute().get();
+                    Type type = new TypeToken<List<Integer>>() {
+                    }.getType();
+                    dogsId = new Gson().fromJson(jsonIn, type);
+                    if (senderId == dogsId.get(0)) {
+                        receiver = dogsId.get(1);
+                    } else {
+                        receiver = dogsId.get(0);
+                    }
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            return receiver;
+        }
+
+    };
 
     void findToolBarViews() {
         tbMain = findViewById(R.id.tbMain);
@@ -175,4 +311,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(serviceConnection);
+        //TODO
+        Common.disconnectServer();
+    }
 }
