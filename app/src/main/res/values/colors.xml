@@ -4,7 +4,10 @@
     <color name="colorPrimaryDark">#e29b00</color>
     <color name="colorAccent">#ff9100</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray">#dedede</color>
     <color name="black">#000000</color>
     <color name="button" >#00acf1</color>
+    <color name="transparent" >#00ffffff</color>
+    <color name="pink" >#ff7d73</color>
 
 </resources>

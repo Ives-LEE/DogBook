@@ -1,6 +1,8 @@
 package com.example.leeicheng.dogbook.articles;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,11 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.leeicheng.dogbook.R;
 import com.example.leeicheng.dogbook.main.Common;
+import com.example.leeicheng.dogbook.main.CommonRemote;
 import com.example.leeicheng.dogbook.main.GeneralTask;
 import com.example.leeicheng.dogbook.media.MediaTask;
 import com.example.leeicheng.dogbook.mydog.Dog;
@@ -32,32 +38,31 @@ public class ArticlesFragment extends Fragment {
     RecyclerView rvArticles;
     List<Article> articles;
     GeneralTask generalTask;
-    MediaTask mediaTask;
-    String TAG = "";
+    ArticlesAdapter articlesAdapter;
     Dog dog;
-
+    //....
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.articles_fragment, container, false);
         findViews(view);
-        articles = getArticle();
+        articles = getArticles();
         return view;
     }
 
     void findViews(View view) {
         rvArticles = view.findViewById(R.id.rvArticles);
+        viewsControl();
+    }
+
+    void viewsControl() {
         rvArticles.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        rvArticles.setAdapter(new ArticlesAdapter(getActivity()));
+        articlesAdapter = new ArticlesAdapter();
+        rvArticles.setAdapter(articlesAdapter);
     }
 
 
     public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder> {
-        private Context context;
-
-        ArticlesAdapter(Context context) {
-            this.context = context;
-        }
 
         @Override
         public ArticleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -67,16 +72,55 @@ public class ArticlesFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ArticleViewHolder holder, int position) {
-            Article article = articles.get(position);
-            if ((dog = getDogInfo(article.getDogId())) != null) {
+        public void onBindViewHolder(final ArticleViewHolder holder, final int position) {
+            final Article article = articles.get(position);
+            Drawable drawable;
+            int likeCount;
+            if ((dog = CommonRemote.getDogInfo(article.getDogId(), getActivity())) != null) {
                 holder.tvPosterName.setText(dog.getName());
             }
             if (article != null) {
                 holder.tvArticleContent.setText(article.getContent());
-                getProfilePhoto(article.getDogId(), holder.civProfilePhoto);
-                getMedia(article.getMediaId(), holder.ivArticlePhoto);
+                CommonRemote.getProfilePhoto(article.getDogId(), holder.civProfilePhoto, getActivity());
+                CommonRemote.getMedia(article.getMediaId(), holder.ivArticlePhoto, getActivity());
             }
+
+            holder.cbLike.setOnCheckedChangeListener(null);
+
+            if (isLike(article.getArticleId())) {
+                drawable = getResources().getDrawable(R.drawable.ic_favorite_24dp);
+                holder.cbLike.setBackground(drawable);
+                holder.cbLike.setChecked(true);
+            } else {
+                drawable = getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
+                holder.cbLike.setBackground(drawable);
+                holder.cbLike.setChecked(false);
+            }
+
+
+            holder.cbLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                Drawable drawable;
+                int articleId = article.getArticleId();
+
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean selected) {
+                    if (selected) {
+                        addLike(articleId);
+                        drawable = getResources().getDrawable(R.drawable.ic_favorite_24dp);
+                        holder.cbLike.setBackground(drawable);
+                        holder.cbLike.setChecked(selected);
+                    } else {
+                        deleteLike(articleId);
+                        drawable = getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
+                        holder.cbLike.setBackground(drawable);
+                        holder.cbLike.setChecked(selected);
+                    }
+                }
+            });
+
+            likeCount = getLikeCount(article.getArticleId());
+            holder.likesCount.setText(likeCount + " likes");
+
         }
 
         @Override
@@ -85,7 +129,8 @@ public class ArticlesFragment extends Fragment {
         }
 
         public class ArticleViewHolder extends RecyclerView.ViewHolder {
-            ImageView civProfilePhoto, ivLike, ivArticlePhoto;
+            ImageView civProfilePhoto, ivArticlePhoto;
+            CheckBox cbLike;
             TextView tvPosterName, likesCount, tvArticleContent;
 
             public ArticleViewHolder(View view) {
@@ -95,71 +140,17 @@ public class ArticlesFragment extends Fragment {
 
             void findViews(View view) {
                 civProfilePhoto = view.findViewById(R.id.civProfilePhoto);
-                ivLike = view.findViewById(R.id.ivLike);
+                cbLike = view.findViewById(R.id.cbLike);
                 ivArticlePhoto = view.findViewById(R.id.ivArticlePhoto);
                 tvArticleContent = view.findViewById(R.id.tvArticleContent);
                 likesCount = view.findViewById(R.id.likesCount);
                 tvPosterName = view.findViewById(R.id.tvPosterName);
-
             }
         }
 
-
     }
 
-    Dog getDogInfo(int dogId) {
-        Gson gson = new GsonBuilder().create();
-        Dog dog = null;
-        if (Common.isNetworkConnect(getActivity())) {
-            String url = Common.URL + "/DogServlet";
-            JsonObject jsonObject = new JsonObject();
-            dog = new Dog(dogId);
-
-            jsonObject.addProperty("status", Common.GET_DOG_INFO);
-            jsonObject.addProperty("dog", gson.toJson(dog));
-
-            generalTask = new GeneralTask(url, jsonObject.toString());
-
-            try {
-                String info = generalTask.execute().get();
-                gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-                dog = gson.fromJson(info, Dog.class);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        return dog;
-    }
-
-    void getMedia(int MediaId, ImageView imageView) {
-        int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
-        if (Common.isNetworkConnect(getActivity())) {
-            String url = Common.URL + "/MediaServlet";
-            mediaTask = new MediaTask(url, MediaId, photoSize, imageView, Common.GET_ARTICLES, "media");
-            try {
-                mediaTask.execute();
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-        }
-    }
-
-    void getProfilePhoto(int dogId, ImageView imageView) {
-        int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
-        if (Common.isNetworkConnect(getActivity())) {
-            String url = Common.URL + "/MediaServlet";
-            mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_PHOTO, "dog");
-            try {
-                mediaTask.execute();
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-        }
-    }
-
-    List<Article> getArticle() {
+    List<Article> getArticles() {
         List<Article> articles = null;
         int dogId = Common.getPreferencesDogId(getActivity());
         if (Common.isNetworkConnect(getActivity())) {
@@ -182,5 +173,106 @@ public class ArticlesFragment extends Fragment {
 
         }
         return articles;
+    }
+
+    boolean isLike(int articleId) {
+        boolean isLike = false;
+        int dogId = Common.getPreferencesDogId(getActivity());
+        if (Common.isNetworkConnect(getActivity())) {
+            String url = Common.URL + "/ArticleServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("status", Common.SELECT_LIKE);
+            jsonObject.addProperty("articleId", articleId);
+            jsonObject.addProperty("dogId", dogId);
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                String jsonIn = generalTask.execute().get();
+                jsonObject = new Gson().fromJson(jsonIn, JsonObject.class);
+                isLike = jsonObject.get("isLike").getAsBoolean();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return isLike;
+    }
+
+    void addLike(int articleId) {
+        int dogId = Common.getPreferencesDogId(getActivity());
+        if (Common.isNetworkConnect(getActivity())) {
+            String url = Common.URL + "/ArticleServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("status", Common.ADD_LIKE);
+            jsonObject.addProperty("articleId", articleId);
+            jsonObject.addProperty("dogId", dogId);
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                generalTask.execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    void deleteLike(int articleId) {
+        int dogId = Common.getPreferencesDogId(getActivity());
+        if (Common.isNetworkConnect(getActivity())) {
+            String url = Common.URL + "/ArticleServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("status", Common.DELETE_LIKE);
+            jsonObject.addProperty("articleId", articleId);
+            jsonObject.addProperty("dogId", dogId);
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                generalTask.execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    int getLikeCount(int articleId) {
+        int likeCount = 0;
+        if (Common.isNetworkConnect(getActivity())) {
+            String url = Common.URL + "/ArticleServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("status", Common.GET_LIKE_COUNT);
+            jsonObject.addProperty("articleId", articleId);
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                String jsonIn = generalTask.execute().get();
+                jsonObject = new Gson().fromJson(jsonIn, JsonObject.class);
+                likeCount = jsonObject.get("likeCount").getAsInt();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return likeCount;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        articles = getArticles();
+        articlesAdapter.notifyDataSetChanged();
     }
 }

@@ -1,22 +1,15 @@
 package com.example.leeicheng.dogbook.mydog;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,20 +26,20 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.leeicheng.dogbook.main.CommonRemote;
 import com.example.leeicheng.dogbook.main.GeneralTask;
 import com.example.leeicheng.dogbook.R;
 import com.example.leeicheng.dogbook.main.Common;
+import com.example.leeicheng.dogbook.media.MediaAction;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class AddDogActivity extends AppCompatActivity {
     String TAG = "新增狗";
@@ -135,8 +128,8 @@ public class AddDogActivity extends AppCompatActivity {
         sVariety.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO
                 hideKeyboard();
+
             }
 
             @Override
@@ -152,13 +145,13 @@ public class AddDogActivity extends AppCompatActivity {
                 name = etName.getText().toString();
                 birthday = etBirthday.getText().toString();
                 age = Integer.valueOf(etAge.getText().toString());
-                variety = "god";
+                variety = sVariety.getSelectedItem().toString();
                 ownerId = Common.getPreferencesOwnerId(getApplicationContext());
                 try {
                     Date birthdayToDate = format.parse(birthday);
                     dog = new Dog(ownerId, name, gender, variety, age, birthdayToDate);
                     sendDogInfo(dog);
-                    sendMedia();
+                    CommonRemote.sendMedia(photo, getApplicationContext());
                     finish();
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -174,10 +167,6 @@ public class AddDogActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    void show() {
-        Log.d(TAG, "狗的ID = " + Common.getPreferencesDogId(this));
     }
 
     void hideKeyboard() {
@@ -221,13 +210,13 @@ public class AddDogActivity extends AppCompatActivity {
             switch (requestCode) {
                 case Common.REQ_TAKE_PICTURE:
                     if (contentUri != null) {
-                        crop(contentUri,PROFILE_PHOTO);
+                        crop(contentUri, PROFILE_PHOTO);
                     }
                     break;
                 case Common.REQ_CHOOSE_PROFILE_PICTURE:
                     Uri uri = data.getData();
                     if (uri != null) {
-                        crop(uri,PROFILE_PHOTO);
+                        crop(uri, PROFILE_PHOTO);
                     }
                     break;
                 case Common.REQ_CROP_PROFILE_PICTURE:
@@ -246,11 +235,11 @@ public class AddDogActivity extends AppCompatActivity {
     public void takePicture() {
         Intent intent = new Intent();
         intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-        File file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        file = new File(file, "photo.jpg");
-        contentUri = FileProvider.getUriForFile(this,getPackageName() + ".provider", file);
+
+        contentUri = MediaAction.takePicture(this);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-        if (isIntentAvailable(intent)) {
+
+        if (MediaAction.isIntentAvailable(intent, this)) {
             startActivityForResult(intent, Common.REQ_TAKE_PICTURE);
         }
     }
@@ -260,7 +249,7 @@ public class AddDogActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
-        if (isIntentAvailable(intent)) {
+        if (MediaAction.isIntentAvailable(intent, this)) {
             if (action == Common.REQ_CHOOSE_PROFILE_PICTURE) {
                 startActivityForResult(intent, Common.REQ_CHOOSE_PROFILE_PICTURE);
             } else if (action == Common.REQ_CHOOSE_BACKGROUND_PICTURE) {
@@ -269,73 +258,22 @@ public class AddDogActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isIntentAvailable(Intent intent) {
-        PackageManager packageManager = getPackageManager();
-        List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent
-                , packageManager.MATCH_DEFAULT_ONLY);
-        return resolveInfos.size() > 0;
-    }
 
     public void crop(Uri srcImageUri, String action) {
-        File file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        file = new File(file, "photo_crop.jpg");
-
-        int width = 0;
-        int height = 0;
         int req = -1;
-
         if (action.equals(PROFILE_PHOTO)) {
-            width = 150;
-            height = 150;
             req = Common.REQ_CROP_PROFILE_PICTURE;
 
         } else if (action.equals(BACKGROUND)) {
-            width = 160;
-            height = 90;
             req = Common.REQ_CROP_BACKGROUND_PICTURE;
         }
-
-        croppedImageUri = Uri.fromFile(file);
         try {
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setDataAndType(srcImageUri, "image/*");
-            intent.putExtra("crop", "true");
-            intent.putExtra("aspectX", width);
-            intent.putExtra("aspectY", height);
-            intent.putExtra("outputX", width);
-            intent.putExtra("outputY", height);
-            intent.putExtra("scale", true);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, croppedImageUri);
-            intent.putExtra("return-data", true);
+            Intent intent = MediaAction.crop(this, srcImageUri, action);
             startActivityForResult(intent, req);
         } catch (ActivityNotFoundException anfe) {
             Toast.makeText(this, "This device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
         }
     }
-
-    void sendMedia() {
-        String TAG = "送";
-        if (Common.isNetworkConnect(this)) {
-            String url = Common.URL + "/MediaServlet";
-            byte[] image = Common.bitmapToPNG(photo);
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("status", Common.SET_PROFILE_PHOTO);
-            jsonObject.addProperty("dogId", Common.getPreferencesDogId(this));
-            jsonObject.addProperty("media", Base64.encodeToString(image, Base64.DEFAULT));
-            jsonObject.addProperty("type", 1);
-            generalTask = new GeneralTask(url, jsonObject.toString());
-            try {
-                String jsonIn = generalTask.execute().get();
-                JsonObject jObject = new Gson().fromJson(jsonIn, JsonObject.class);
-
-                Log.d(TAG, "成功 = " + jObject.get("isSuccess").getAsString());
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-        }
-    }
-
 
     void sendDogInfo(Dog dog) {
         if (Common.isNetworkConnect(this)) {

@@ -69,8 +69,9 @@ public class LoginActivity extends AppCompatActivity {
                             .putString("email", email)
                             .putString("password", password)
                             .apply();
-
+                    int dogId = Common.getPreferencesDogId(getApplicationContext());
                     Log.d("設定",pref.getAll().toString());
+                    Common.connectServer(getApplicationContext(), dogId);
                     finish();
                 }
             }

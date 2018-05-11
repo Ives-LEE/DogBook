@@ -18,9 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by leeicheng on 2018/4/22.
- */
 
 public class Common {
     public static final int REQ_TAKE_PICTURE = 0;
@@ -29,15 +26,18 @@ public class Common {
     public static final int REQ_CROP_PROFILE_PICTURE = 3;
     public static final int REQ_CROP_BACKGROUND_PICTURE = 4;
     public static final int REQ_CHOOSE_PICTURE = 5;
-    public final static int NOTIFICATION_ID = 0;
+    final static int NOTIFICATION_ID = 0;
 
     public static final String PROFILE_PHOTO = "profilePhoto";
     public static final String BACKGROUND_PHOTO = "backgroundPhoto";
     public final static String URL = "http://10.0.2.2:8080/DogBookServlet";
+//    public final static String URL = "http://192.168.43.68:8080/DogBookServlet";
+//    private static String SERVER_URI = "ws://192.168.43.68:8080/DogBookServlet/ChatWebSocketServer/";
+    private static String SERVER_URI = "ws://10.0.2.2:8080/DogBookServlet/ChatWebSocketServer/";
     public final static String PREF_FILE = "preference";
     public final static String INSERT = "insert";
     public final static String SELECT = "select";
-    public final static String GET_DOG_INFO = "getDogInfo";
+    final static String GET_DOG_INFO = "getDogInfo";
     public final static String ADD_DOG = "addDog";
     public final static String GET_PROFILE_PHOTO = "getProfilePhoto";
     public final static String SET_PROFILE_PHOTO = "setProfilePhoto";
@@ -51,9 +51,13 @@ public class Common {
     public final static String GET_CHATS_RECODING = "getChatsRecoding";
     public final static String GET_LAST_CHAT = "getLastChat";
     public final static String GET_ROOM_DOGS = "getRoomDogs";
+    public final static String ADD_LIKE = "addLike";
+    public final static String DELETE_LIKE = "deleteLike";
+    public final static String SELECT_LIKE = "selectLike";
+    public final static String GET_LIKE_COUNT = "getLikeCount";
 
 
-    public static String SERVER_URI = "ws://10.0.2.2:8080/DogBookServlet/ChatWebSocketServer/";
+
     public static int room = -1;
     public static ChatWebSocketClient chatWebSocketClient;
 
@@ -94,81 +98,71 @@ public class Common {
 
     public static String getPreferenceAll(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         return pref.getAll().toString();
     }
 
     public static void setPreferenceClear(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         pref.edit().clear().commit();
     }
 
     public static int getPreferencesDogId(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         int id = pref.getInt("dogId", -1);
         return id;
     }
 
     public static void setPreferencesDogId(Context context, int id) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         pref.edit().putInt("dogId", id).apply();
     }
 
     public static int getPreferencesOwnerId(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         int id = pref.getInt("ownerId", -1);
         return id;
     }
 
     public static void setPreferencesOwnerId(Context context, int id) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         pref.edit().putInt("ownerId", id).apply();
     }
 
     public static boolean getPreferencesIsLogin(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         boolean isLogin = pref.getBoolean("isLogin", false);
         return isLogin;
     }
 
     public static void setPreferencesIsLogin(Context context, boolean isLogin) {
         SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
-                context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         pref.edit().putBoolean("isLogin", isLogin).apply();
     }
 
-    public static Dog getDogInfo(int dogId,Context context) {
-        Gson gson = new GsonBuilder().create();
-        Dog dog = null;
-        GeneralTask generalTask;
-        if (Common.isNetworkConnect(context)) {
-            String url = Common.URL + "/DogServlet";
-            JsonObject jsonObject = new JsonObject();
-            dog = new Dog(dogId);
-
-            jsonObject.addProperty("status", Common.GET_DOG_INFO);
-            jsonObject.addProperty("dog", gson.toJson(dog));
-
-            generalTask = new GeneralTask(url, jsonObject.toString());
-
-            try {
-                String info = generalTask.execute().get();
-                gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-                dog = gson.fromJson(info, Dog.class);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        return dog;
+    public static int getPreferencesRoom(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
+                context.MODE_PRIVATE);
+        int roomId = pref.getInt("roomId", -1);
+        return roomId;
     }
 
+    public static void setPreferencesRoom(Context context, int roomId) {
+        SharedPreferences pref = context.getSharedPreferences(Common.PREF_FILE,
+                Context.MODE_PRIVATE);
+        pref.edit().putInt("roomId", roomId).apply();
+    }
 
+    public static String dateFormat(String date){
+        String result = null;
+
+        return result;
+    }
 }

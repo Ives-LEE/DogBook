@@ -1,6 +1,8 @@
 package com.example.leeicheng.dogbook.mydog;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -10,19 +12,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -31,19 +32,21 @@ import android.widget.Toast;
 import com.example.leeicheng.dogbook.R;
 import com.example.leeicheng.dogbook.articles.Article;
 import com.example.leeicheng.dogbook.main.Common;
+import com.example.leeicheng.dogbook.main.CommonRemote;
 import com.example.leeicheng.dogbook.main.GeneralTask;
+import com.example.leeicheng.dogbook.media.MediaAction;
 import com.example.leeicheng.dogbook.media.MediaTask;
 import com.example.leeicheng.dogbook.owner.LoginActivity;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.zip.Inflater;
 
 
 public class MyDogFragment extends Fragment {
@@ -53,6 +56,8 @@ public class MyDogFragment extends Fragment {
     private Uri croppedImageUri;
     static Bitmap photo;
     ImageView ivProfile, ivProfileBackground;
+    ImageButton changeBackgroundPhoto;
+
     TextView tvProfileInfo;
     GeneralTask generalTask;
     Dog dog;
@@ -157,36 +162,15 @@ public class MyDogFragment extends Fragment {
     }
 
     public void crop(Uri srcImageUri, String action) {
-        File file = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        file = new File(file, "photo_crop.jpg");
-
-        int width = 0;
-        int height = 0;
         int req = -1;
-
         if (action.equals(Common.PROFILE_PHOTO)) {
-            width = 150;
-            height = 150;
             req = Common.REQ_CROP_PROFILE_PICTURE;
         } else if (action.equals(Common.BACKGROUND_PHOTO)) {
-            width = 160;
-            height = 90;
             req = Common.REQ_CROP_BACKGROUND_PICTURE;
         }
 
-        croppedImageUri = Uri.fromFile(file);
         try {
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setDataAndType(srcImageUri, "image/*");
-            intent.putExtra("crop", "true");
-            intent.putExtra("aspectX", width);
-            intent.putExtra("aspectY", height);
-            intent.putExtra("outputX", width);
-            intent.putExtra("outputY", height);
-            intent.putExtra("scale", true);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, croppedImageUri);
-            intent.putExtra("return-data", true);
+            Intent intent = MediaAction.crop(getActivity(), srcImageUri, action);
             startActivityForResult(intent, req);
         } catch (ActivityNotFoundException anfe) {
             Toast.makeText(getActivity(), "This device doesn't support the crop action!", Toast.LENGTH_SHORT).show();
@@ -243,10 +227,6 @@ public class MyDogFragment extends Fragment {
         String TAG = "我的狗";
         int TYPE_ONE = 0;
         int TYPE_TWO = 1;
-        final String DOG_INFO = "Dog Info";
-        final String SIGN_OUT = "Sign Out";
-        final String CHANGE_DOG_PROFILE_PHOTO = "Change Profile Photo";
-        final String CHANGE_DOG_BACKGROUND_PHOTO = "Change Background Photo";
         List<Article> myArticles;
         private Context context;
         Activity activity;
@@ -274,14 +254,14 @@ public class MyDogFragment extends Fragment {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
             if (position == 0) {
                 DogMainViewHolder dogMainViewHolder = (DogMainViewHolder) holder;
-
+                int dogId = Common.getPreferencesDogId(getActivity());
                 if (Common.getPreferencesIsLogin(context)) {
                     //登入後
-                    if ((dog = dogMainViewHolder.getDogInfo()) != null) {
+                    if ((dog = CommonRemote.getDogInfo(dogId, getActivity())) != null) {
                         tvProfileInfo.setText(dog.getName());
                     }
-                    dogMainViewHolder.getProfilePhoto();
-                    dogMainViewHolder.getBackgroundPhoto();
+                    CommonRemote.getProfilePhoto(dogId, ivProfile, getActivity());
+                    dogMainViewHolder.getBackgroundPhoto(ivProfileBackground);
                     dogMainViewHolder.viewControlLogined();
                 } else {
                     //登入前
@@ -292,7 +272,7 @@ public class MyDogFragment extends Fragment {
                 if (Common.getPreferencesIsLogin(context)) {
                     ArticlesViewHolder articlesViewHolder = (ArticlesViewHolder) holder;
                     Article article = myArticles.get(position - 1);
-                    getMedia(article.getMediaId(), articlesViewHolder.ivArticle);
+                    CommonRemote.getMedia(article.getMediaId(), articlesViewHolder.ivArticle, getActivity());
 
                     articlesViewHolder.ivArticle.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -331,12 +311,13 @@ public class MyDogFragment extends Fragment {
 
         //主功能
         public class DogMainViewHolder extends RecyclerView.ViewHolder {
-
             public DogMainViewHolder(View itemView) {
                 super(itemView);
                 ivProfile = itemView.findViewById(R.id.ivAddProfile);
                 tvProfileInfo = itemView.findViewById(R.id.tvProfileInfo);
                 ivProfileBackground = itemView.findViewById(R.id.ivProfileBackground);
+                changeBackgroundPhoto = itemView.findViewById(R.id.ibBackground);
+
             }
 
             void viewsControlUnLogin() {
@@ -357,88 +338,68 @@ public class MyDogFragment extends Fragment {
                         if (Common.getPreferencesDogId(context) == -1) {
                             Intent intent = new Intent(context, AddDogActivity.class);
                             context.startActivity(intent);
+                        } else {
+                            int dogId = Common.getPreferencesDogId(getActivity());
+                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                            View dialogView = getLayoutInflater().inflate(R.layout.mydog_dialog, null);
+                            final ImageView background = dialogView.findViewById(R.id.ivBackgroundDialog);
+                            ImageView ProfilePhoto = dialogView.findViewById(R.id.ivProfilePhotoDialog);
+                            TextView tvName = dialogView.findViewById(R.id.tvNameDialog);
+                            TextView tvInfo = dialogView.findViewById(R.id.tvInfoDialog);
+                            Button changeProfilePhoto = dialogView.findViewById(R.id.changeProfilePhoto);
+                            Button signOut = dialogView.findViewById(R.id.signOut);
+                            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
+
+                            getBackgroundPhoto(background);
+                            CommonRemote.getProfilePhoto(dogId, ProfilePhoto, getActivity());
+                            tvName.setText(dog.getName());
+                            String info = "品種：" + dog.getVariety() + "\n"
+                                    + "性別：" + dog.getGender() + "\n"
+                                    + "年紀：" + dog.getAge() + "\n"
+                                    +  "生日：" + dateFormat.format(dog.getBirthday());
+
+                            tvInfo.setText(info);
+
+                            dialogBuilder.setView(dialogView);
+                            final AlertDialog myDogDialog = dialogBuilder.create();
+                            myDogDialog.show();
+
+                            changeProfilePhoto.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    choosePicture(Common.REQ_CHOOSE_PROFILE_PICTURE);
+                                    myDogDialog.cancel();
+                                }
+                            });
+
+                            signOut.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Common.setPreferenceClear(context);
+                                    Common.disconnectServer();
+                                    viewControl();
+                                    myDogDialog.cancel();
+
+                                }
+                            });
                         }
                     }
                 });
 
-                ivProfile.setOnLongClickListener(new View.OnLongClickListener() {
+                changeBackgroundPhoto.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public boolean onLongClick(View view) {
-
-                        PopupMenu popupMenu = new PopupMenu(context, view);
-                        popupMenu.inflate(R.menu.dog_info_menu);
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem menuItem) {
-                                if (menuItem.getItemId() == R.id.info) {
-
-                                } else if (menuItem.getItemId() == R.id.changeProfilePhoto) {
-                                    choosePicture(Common.REQ_CHOOSE_PROFILE_PICTURE);
-
-                                } else if (menuItem.getItemId() == R.id.changeBackgroundPhoto) {
-                                    choosePicture(Common.REQ_CHOOSE_BACKGROUND_PICTURE);
-
-                                } else if (menuItem.getItemId() == R.id.signOut) {
-                                    Common.setPreferenceClear(context);
-                                    tvProfileInfo.setText(Common.getPreferenceAll(context));
-                                }
-                                return true;
-                            }
-                        });
-                        popupMenu.show();
-                        return true;
+                    public void onClick(View view) {
+                        choosePicture(Common.REQ_CHOOSE_BACKGROUND_PICTURE);
                     }
                 });
             }
 
-            Dog getDogInfo() {
-                int dogId = Common.getPreferencesDogId(context);
-                Gson gson = new GsonBuilder().create();
-                Dog dog = null;
-                if (Common.isNetworkConnect(context)) {
-                    String url = Common.URL + "/DogServlet";
-                    JsonObject jsonObject = new JsonObject();
-                    dog = new Dog(dogId);
-
-                    jsonObject.addProperty("status", Common.GET_DOG_INFO);
-                    jsonObject.addProperty("dog", gson.toJson(dog));
-
-                    generalTask = new GeneralTask(url, jsonObject.toString());
-
-                    try {
-                        String info = generalTask.execute().get();
-                        gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-                        dog = gson.fromJson(info, Dog.class);
-//                        Log.d("", "info = " + info + "dog = " + dog.toString());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return dog;
-            }
-
-            void getProfilePhoto() {
-                int photoSize = context.getResources().getDisplayMetrics().widthPixels / 4;
-                int dogId = Common.getPreferencesDogId(context);
-                if (Common.isNetworkConnect(context)) {
-                    String url = Common.URL + "/MediaServlet";
-                    mediaTask = new MediaTask(url, dogId, photoSize, ivProfile, Common.GET_PROFILE_PHOTO, "dog");
-                    try {
-                        mediaTask.execute();
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                    }
-                }
-            }
-
-            void getBackgroundPhoto() {
+            void getBackgroundPhoto(ImageView imageView) {
                 int photoSize = context.getResources().getDisplayMetrics().widthPixels;
                 int dogId = Common.getPreferencesDogId(context);
                 if (Common.isNetworkConnect(context)) {
                     String url = Common.URL + "/MediaServlet";
-                    mediaTask = new MediaTask(url, dogId, photoSize, ivProfileBackground, Common.GET_PROFILE_BACKGROUND_PHOTO, "dog");
+                    mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_BACKGROUND_PHOTO, "dog");
                     try {
                         mediaTask.execute();
                     } catch (Exception e) {
@@ -446,8 +407,6 @@ public class MyDogFragment extends Fragment {
                     }
                 }
             }
-
-
         }
 
         // 顯示文
@@ -490,18 +449,11 @@ public class MyDogFragment extends Fragment {
             return articles;
         }
 
-        void getMedia(int MediaId, ImageView imageView) {
-            int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
-            if (Common.isNetworkConnect(getActivity())) {
-                String url = Common.URL + "/MediaServlet";
-                mediaTask = new MediaTask(url, MediaId, photoSize, imageView, Common.GET_ARTICLES, "media");
-                try {
-                    mediaTask.execute();
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                }
-            }
-        }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewControl();
+    }
 }

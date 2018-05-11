@@ -34,19 +34,21 @@
                 android:paddingLeft="10dp"
                 android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/ivLike"
+            <CheckBox
+                android:id="@+id/cbLike"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_favorite_border_black_24dp" />
+                android:button="@color/transparent"
+                android:backgroundTint="@color/pink"
+                android:background="@drawable/ic_favorite_border_black_24dp" />
 
             <TextView
                 android:id="@+id/likesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ivLike"
+                android:layout_toLeftOf="@id/cbLike"
                 android:text=" 0 likes"
                 android:layout_marginTop="10dp"/>
 

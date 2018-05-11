@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/info"
-        android:title="@string/dogInfo" />
-    <item
+        android:icon="@drawable/ic_insert_emoticon_black_24dp"
         android:id="@+id/changeProfilePhoto"
         android:title="@string/changeProfilePhoto" />
     <item
+        android:icon="@drawable/ic_image_black_24dp"
         android:id="@+id/changeBackgroundPhoto"
         android:title="@string/changeBackgroundPhoto" />
     <item
+        android:icon="@drawable/ic_arrow_forward_black_24dp"
         android:id="@+id/signOut"
         android:title="@string/signOut" />
 

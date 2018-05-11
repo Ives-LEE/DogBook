@@ -23,8 +23,8 @@
     <string name="dogInfo">Dog Info</string>
     <string name="takePicture">Take Picture</string>
     <string name="choosePicture">Choose Picture</string>
-    <string name="changeProfilePhoto">Change Profile Photo</string>
-    <string name="changeBackgroundPhoto">Change Background Photo</string>
+    <string name="changeProfilePhoto">Change Photo</string>
+    <string name="changeBackgroundPhoto">Change Background</string>
     <string name="calendar">Calendar</string>
     <string name="addPicture">choose / take picture</string>
     <string name="saySomething">Say Something</string>
@@ -32,4 +32,6 @@
     <string name="submit">Submit</string>
     <string name="text_MessageEmpty">Message is Empty</string>
     <string name="messageEmpty">Message is Empty</string>
+    <string name="variety">Variety</string>
+    <string name="gender">Gender</string>
 </resources>

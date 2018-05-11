@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     void chatNotificationManager(){
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            chatChannel = new NotificationChannel("chat","message",NotificationManager.IMPORTANCE_DEFAULT);
+            chatChannel = new NotificationChannel("chat","message",NotificationManager.IMPORTANCE_HIGH);
             chatChannel.setDescription("message");
             chatChannel.enableLights(true);
             chatChannel.enableVibration(true);
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 broadcastManager = LocalBroadcastManager.getInstance(context);
                 chatService = ((ChatService.ServiceBinder) iBinder).getService();
                 dogId = Common.getPreferencesDogId(context);
-                Common.connectServer(context, dogId);
+
                 registerChatReceiver();
             }
         }
@@ -117,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (Common.room == -1) {
+                Log.d("房","我在這"+Common.room);
+                int inRoom = Common.getPreferencesRoom(getApplicationContext());
+                if (Common.room == -1 || Common.room == inRoom) {
                     String message = intent.getStringExtra("message");
                     Chat chat = new Gson().fromJson(message, Chat.class);
                     int room = chat.getChatroomId();
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), ChatroomActivity.class);
             intent.putExtras(bundle);
 
-            Dog dog = Common.getDogInfo(chat.getSenderId(), getApplicationContext());
+            Dog dog = CommonRemote.getDogInfo(chat.getSenderId(), getApplicationContext());
 
             PendingIntent pendingIntent =
                     PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -150,8 +152,17 @@ public class MainActivity extends AppCompatActivity {
                         .setContentText(chat.getMessage())
                         .setSmallIcon(android.R.drawable.ic_dialog_email)
                         .setAutoCancel(true)
+                        .setVisibility(Notification.VISIBILITY_SECRET)
                         .setContentIntent(pendingIntent)
                         .setChannelId("chat")
+                        .build();
+            } else {
+                notification = new Notification.Builder(getApplicationContext())
+                        .setContentTitle(dog.getName())
+                        .setContentText(chat.getMessage())
+                        .setSmallIcon(android.R.drawable.ic_dialog_email)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
                         .build();
             }
 
@@ -315,8 +326,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(serviceConnection);
+//        unbindService(serviceConnection);
         //TODO
-        Common.disconnectServer();
+//        Common.disconnectServer();
     }
 }

@@ -4,18 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,19 +25,16 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.leeicheng.dogbook.R;
-import com.example.leeicheng.dogbook.articles.Article;
 import com.example.leeicheng.dogbook.main.Common;
 import com.example.leeicheng.dogbook.main.GeneralTask;
+import com.example.leeicheng.dogbook.main.CommonRemote;
 import com.example.leeicheng.dogbook.media.MediaTask;
 import com.example.leeicheng.dogbook.mydog.Dog;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -59,6 +51,7 @@ public class ChatroomActivity extends AppCompatActivity {
     MediaTask mediaTask;
     String TAG = "聊天室";
     LocalBroadcastManager broadcastManager;
+    public static Bitmap friendPhoto;
 
     List<Chat> chats;
     ChatsAdapter chatsAdapter;
@@ -82,8 +75,9 @@ public class ChatroomActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         friendId = bundle.getInt("friendId");
         roomId = bundle.getInt("roomId");
+        Common.setPreferencesRoom(this,roomId);
         Common.room = roomId;
-        dog = getDogInfo(friendId);
+        dog = CommonRemote.getDogInfo(friendId,this);
     }
 
     void findToolBarViews() {
@@ -159,7 +153,6 @@ public class ChatroomActivity extends AppCompatActivity {
                 chats.add(chat);
                 chatsAdapter.notifyDataSetChanged();
                 rvChats.scrollToPosition(chatsAdapter.getItemCount() - 1);
-
             }
         }
     }
@@ -215,7 +208,10 @@ public class ChatroomActivity extends AppCompatActivity {
                 layoutParams.addRule(RelativeLayout.END_OF, R.id.civFriendProfilePhotoChat);
                 holder.cvChatBubble.setLayoutParams(layoutParams);
                 holder.civFriendProfilePhoto.setVisibility(View.VISIBLE);
-                getProfilePhoto(friendId, holder.civFriendProfilePhoto);
+                if (friendPhoto ==null){
+                    friendPhoto = CommonRemote.getProfilePhoto(friendId, holder.civFriendProfilePhoto,getApplicationContext());
+                }
+                holder.civFriendProfilePhoto.setImageBitmap(friendPhoto);
                 holder.tvChat.setText(chat.getMessage());
             }
 
@@ -243,45 +239,6 @@ public class ChatroomActivity extends AppCompatActivity {
     }
 
 
-    Dog getDogInfo(int dogId) {
-        Gson gson = new GsonBuilder().create();
-        Dog dog = null;
-        if (Common.isNetworkConnect(this)) {
-            String url = Common.URL + "/DogServlet";
-            JsonObject jsonObject = new JsonObject();
-            dog = new Dog(dogId);
-
-            jsonObject.addProperty("status", Common.GET_DOG_INFO);
-            jsonObject.addProperty("dog", gson.toJson(dog));
-
-            generalTask = new GeneralTask(url, jsonObject.toString());
-
-            try {
-                String info = generalTask.execute().get();
-                gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-                dog = gson.fromJson(info, Dog.class);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        return dog;
-    }
-
-    void getProfilePhoto(int dogId, ImageView imageView) {
-        int photoSize = getResources().getDisplayMetrics().widthPixels / 4;
-        if (Common.isNetworkConnect(this)) {
-            String url = Common.URL + "/MediaServlet";
-            mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_PHOTO, "dog");
-            try {
-                mediaTask.execute();
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-        }
-    }
-
     List<Chat> getChatsRecoding(int roomId) {
         List<Chat> chats = null;
         if (Common.isNetworkConnect(getApplicationContext())) {
@@ -308,8 +265,9 @@ public class ChatroomActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         chats.clear();
+        friendPhoto = null;
         Common.room = -1;
+        Common.setPreferencesRoom(this,-1);
+
     }
-
-
 }

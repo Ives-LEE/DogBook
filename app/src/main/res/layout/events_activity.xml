@@ -23,7 +23,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:background="@color/colorPrimary"
-                android:src="@drawable/ic_arrow_back_black_24dp" />
+                android:src="@drawable/ic_arrow_back_black_24dp"
+                android:tint="@color/white"/>
 
             <ImageButton
                 android:id="@+id/ibAddMyEventToolbar"
@@ -32,7 +33,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@color/colorPrimary"
-                android:src="@drawable/ic_add_black_24dp" />
+                android:src="@drawable/ic_add_black_24dp"
+                android:tint="@color/white"/>
 
             <TextView
                 android:id="@+id/tvTitleMyEvent"
@@ -41,7 +43,8 @@
                 android:layout_centerVertical="true"
                 android:textSize="24dp"
                 android:layout_centerHorizontal="true"
-                android:text="@string/calendar"/>
+                android:text="@string/calendar"
+                android:textColor="@color/white"/>
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>

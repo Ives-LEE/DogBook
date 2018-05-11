@@ -22,7 +22,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:textSize="24dp"/>
+                android:textSize="24dp"
+                android:textColor="@color/white" />
 
             <ImageView
                 android:id="@+id/ivRightToolbar"
@@ -30,7 +31,8 @@
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="16dp" />
+                android:layout_marginRight="16dp"
+                android:tint="@color/white"/>
 
             <ImageView
                 android:id="@+id/ivLeftToolbar"
@@ -38,7 +40,8 @@
                 android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="16dp" />
+                android:layout_marginRight="16dp"
+                android:tint="@color/white"/>
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>

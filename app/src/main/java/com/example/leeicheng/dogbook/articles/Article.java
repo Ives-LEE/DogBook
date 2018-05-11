@@ -5,15 +5,16 @@ package com.example.leeicheng.dogbook.articles;
  */
 
 public class Article {
-    int dogId,status;
+    int dogId,status,articleId;
     String content,location;
     int mediaId;
 
-    public Article(int dogId, String content, int mediaId) {
+    public Article(int articleId ,int dogId, String content, int mediaId) {
         super();
         this.dogId = dogId;
         this.content = content;
         this.mediaId = mediaId;
+        this.articleId = articleId;
     }
 
     public Article(String content, int mediaId) {
@@ -67,5 +68,13 @@ public class Article {
 
     public void setMediaId(int mediaId) {
         this.mediaId = mediaId;
+    }
+
+    public int getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(int articleId) {
+        this.articleId = articleId;
     }
 }
