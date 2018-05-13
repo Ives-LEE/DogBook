@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     LocalBroadcastManager broadcastManager;
     NotificationManager notificationManager;
     NotificationChannel chatChannel;
+    final static String CHAT_CHINNEL = "chat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void chatNotificationManager(){
+    void chatNotificationManager() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            chatChannel = new NotificationChannel("chat","message",NotificationManager.IMPORTANCE_HIGH);
+            chatChannel = new NotificationChannel(CHAT_CHINNEL, "message", NotificationManager.IMPORTANCE_HIGH);
             chatChannel.setDescription("message");
             chatChannel.enableLights(true);
             chatChannel.enableVibration(true);
@@ -117,15 +118,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                Log.d("房","我在這"+Common.room);
+                Log.d("房", "我在這" + Common.room);
                 int inRoom = Common.getPreferencesRoom(getApplicationContext());
+
                 if (Common.room == -1 || Common.room == inRoom) {
                     String message = intent.getStringExtra("message");
                     Chat chat = new Gson().fromJson(message, Chat.class);
                     int room = chat.getChatroomId();
-                    int receiver = getReceiver(room,chat.getSenderId());
-
-                    if (receiver == Common.getPreferencesDogId(context)){
+                    int receiver = getReceiver(room, chat.getSenderId());
+                    //TODO
+                    if ( receiver == Common.getPreferencesDogId(context) && Common.room == -1) {
                         sendNotification(chat);
                     }
                 }
@@ -135,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
         void sendNotification(Chat chat) {
             Bundle bundle = new Bundle();
-            bundle.putInt("friendId",chat.getSenderId());
-            bundle.putInt("roomId",chat.getChatroomId());
+            bundle.putInt("friendId", chat.getSenderId());
+            bundle.putInt("roomId", chat.getChatroomId());
             Intent intent = new Intent(getApplicationContext(), ChatroomActivity.class);
             intent.putExtras(bundle);
 
@@ -147,14 +149,13 @@ public class MainActivity extends AppCompatActivity {
 
             Notification notification = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                notification = new Notification.Builder(getApplicationContext())
+                notification = new Notification.Builder(getApplicationContext(), CHAT_CHINNEL)
                         .setContentTitle(dog.getName())
                         .setContentText(chat.getMessage())
                         .setSmallIcon(android.R.drawable.ic_dialog_email)
                         .setAutoCancel(true)
                         .setVisibility(Notification.VISIBILITY_SECRET)
                         .setContentIntent(pendingIntent)
-                        .setChannelId("chat")
                         .build();
             } else {
                 notification = new Notification.Builder(getApplicationContext())
@@ -169,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(Common.NOTIFICATION_ID, notification);
         }
 
-        int getReceiver(int roomId,int senderId) {
+        int getReceiver(int roomId, int senderId) {
             GeneralTask generalTask;
             int receiver = 0;
             List<Integer> dogsId = null;
