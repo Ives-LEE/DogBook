@@ -1,5 +1,6 @@
 package com.example.leeicheng.dogbook.mydog;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,8 +13,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -44,7 +48,9 @@ import com.google.gson.reflect.TypeToken;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.Inflater;
 
@@ -58,7 +64,8 @@ public class MyDogFragment extends Fragment {
     ImageView ivProfile, ivProfileBackground;
     ImageButton changeBackgroundPhoto;
 
-    TextView tvProfileInfo;
+    TextView tvProfileInfo, tvProfileMeter;
+
     GeneralTask generalTask;
     Dog dog;
 
@@ -136,6 +143,19 @@ public class MyDogFragment extends Fragment {
                         e.printStackTrace();
                     }
                     break;
+            }
+        } else if (resultCode == getActivity().RESULT_CANCELED) {
+            switch (requestCode) {
+                case Common.REQ_CHOOSE_BACKGROUND_PICTURE:
+                    try {
+                        croppedImageUri = data.getData();
+                        photo = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(croppedImageUri));
+                        ivProfileBackground.setImageBitmap(photo);
+                        setBackgroundPhoto();
+                        break;
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
             }
         }
     }
@@ -258,7 +278,9 @@ public class MyDogFragment extends Fragment {
                 if (Common.getPreferencesIsLogin(context)) {
                     //登入後
                     if ((dog = CommonRemote.getDogInfo(dogId, getActivity())) != null) {
+                        float meterSum = CommonRemote.getMeter(dogId, getActivity());
                         tvProfileInfo.setText(dog.getName());
+                        tvProfileMeter.setText(String.format("%.1f", meterSum) + " 公尺");
                     }
                     CommonRemote.getProfilePhoto(dogId, ivProfile, getActivity());
                     dogMainViewHolder.getBackgroundPhoto(ivProfileBackground);
@@ -277,8 +299,12 @@ public class MyDogFragment extends Fragment {
                     articlesViewHolder.ivArticle.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Toast.makeText(context, "這是 = " + position, Toast.LENGTH_SHORT).show();
-
+                            Article article = myArticles.get(position - 1);
+                            Bundle bundle = new Bundle();
+                            Intent intent = new Intent(getActivity(), MyArticleActivity.class);
+                            bundle.putSerializable("article", article);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
                         }
                     });
                 }
@@ -317,10 +343,11 @@ public class MyDogFragment extends Fragment {
                 tvProfileInfo = itemView.findViewById(R.id.tvProfileInfo);
                 ivProfileBackground = itemView.findViewById(R.id.ivProfileBackground);
                 changeBackgroundPhoto = itemView.findViewById(R.id.ibBackground);
-
+                tvProfileMeter = itemView.findViewById(R.id.tvProfileMeter);
             }
 
             void viewsControlUnLogin() {
+                changeBackgroundPhoto.setVisibility(View.INVISIBLE);
                 ivProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -330,6 +357,7 @@ public class MyDogFragment extends Fragment {
             }
 
             void viewControlLogined() {
+                changeBackgroundPhoto.setVisibility(View.VISIBLE);
 
                 ivProfile.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -346,6 +374,7 @@ public class MyDogFragment extends Fragment {
                             ImageView ProfilePhoto = dialogView.findViewById(R.id.ivProfilePhotoDialog);
                             TextView tvName = dialogView.findViewById(R.id.tvNameDialog);
                             TextView tvInfo = dialogView.findViewById(R.id.tvInfoDialog);
+                            final Button goOut = dialogView.findViewById(R.id.goOut);
                             Button changeProfilePhoto = dialogView.findViewById(R.id.changeProfilePhoto);
                             Button signOut = dialogView.findViewById(R.id.signOut);
                             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
@@ -353,10 +382,12 @@ public class MyDogFragment extends Fragment {
                             getBackgroundPhoto(background);
                             CommonRemote.getProfilePhoto(dogId, ProfilePhoto, getActivity());
                             tvName.setText(dog.getName());
-                            String info = "品種：" + dog.getVariety() + "\n"
+                            float meterSum = CommonRemote.getMeter(dogId, getActivity());
+                            String info = String.format("%.1f", meterSum) + " 公尺" + "\n"
+                                    + "品種：" + dog.getVariety() + "\n"
                                     + "性別：" + dog.getGender() + "\n"
                                     + "年紀：" + dog.getAge() + "\n"
-                                    +  "生日：" + dateFormat.format(dog.getBirthday());
+                                    + "生日：" + dateFormat.format(dog.getBirthday());
 
                             tvInfo.setText(info);
 
@@ -382,6 +413,15 @@ public class MyDogFragment extends Fragment {
 
                                 }
                             });
+
+                            goOut.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(getActivity(), WalkActivity.class);
+                                    startActivity(intent);
+                                    myDogDialog.cancel();
+                                }
+                            });
                         }
                     }
                 });
@@ -393,6 +433,7 @@ public class MyDogFragment extends Fragment {
                     }
                 });
             }
+
 
             void getBackgroundPhoto(ImageView imageView) {
                 int photoSize = context.getResources().getDisplayMetrics().widthPixels;

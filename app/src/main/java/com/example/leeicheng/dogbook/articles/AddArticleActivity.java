@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.leeicheng.dogbook.R;
@@ -26,7 +27,8 @@ import java.io.FileNotFoundException;
 
 public class AddArticleActivity extends AppCompatActivity {
     ImageView ivBack, ivArticlePhoto;
-    Button btnSend, btnGetPicture;
+    ImageButton ibSend;
+    Button btnGetPicture;
     EditText etContent;
     String content,location;
     Bitmap photo;
@@ -44,7 +46,7 @@ public class AddArticleActivity extends AppCompatActivity {
 
     void findViews() {
         ivBack = findViewById(R.id.ivLeftToolbar);
-        btnSend = findViewById(R.id.btnSend);
+        ibSend = findViewById(R.id.ibSend);
         etContent = findViewById(R.id.etContentAddArticle);
         btnGetPicture = findViewById(R.id.btnGetPicture);
         ivArticlePhoto = findViewById(R.id.ivArticlePhotoAdd);
@@ -61,7 +63,7 @@ public class AddArticleActivity extends AppCompatActivity {
             }
         });
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        ibSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

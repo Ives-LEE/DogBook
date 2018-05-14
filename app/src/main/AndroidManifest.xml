@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
@@ -25,22 +28,45 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".main.MainActivity">
+        <activity
+            android:name=".main.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".owner.LoginActivity" />
-        <activity android:name=".mydog.AddDogActivity" />
-        <activity android:name=".mydog.MyEventsActivity" />
-        <activity android:name=".articles.AddArticleActivity" />
-        <activity android:name=".chats.ChatroomActivity" />
+        <activity
+            android:name=".owner.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mydog.AddDogActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mydog.MyEventsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".articles.AddArticleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".chats.ChatroomActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mydog.MyArticleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mydog.WalkActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".mydog.AddEventActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".main.ChatService"
             android:enabled="true" />
+
     </application>
 
 </manifest>

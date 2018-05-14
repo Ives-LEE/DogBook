@@ -152,6 +152,10 @@ public class AddDogActivity extends AppCompatActivity {
                     dog = new Dog(ownerId, name, gender, variety, age, birthdayToDate);
                     sendDogInfo(dog);
                     CommonRemote.sendMedia(photo, getApplicationContext());
+                    int dogId = Common.getPreferencesDogId(getApplicationContext());
+                    if ( dogId != -1){
+                        Common.connectServer(getApplicationContext(), dogId);
+                    }
                     finish();
                 } catch (ParseException e) {
                     e.printStackTrace();

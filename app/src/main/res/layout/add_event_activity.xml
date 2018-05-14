@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlAddEvent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/myEventToolbar"
@@ -17,7 +22,7 @@
             android:layout_alignParentTop="true">
 
             <ImageButton
-                android:id="@+id/ibBackMyEventToolbar"
+                android:id="@+id/ibBackAddEventToolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -27,13 +32,13 @@
                 android:tint="@color/white"/>
 
             <ImageButton
-                android:id="@+id/ibAddMyEventToolbar"
+                android:id="@+id/ibAddEventToolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@color/colorPrimary"
-                android:src="@drawable/ic_add_black_24dp"
+                android:src="@drawable/ic_send_black_24dp"
                 android:tint="@color/white"/>
 
             <TextView
@@ -43,22 +48,45 @@
                 android:layout_centerVertical="true"
                 android:textSize="24dp"
                 android:layout_centerHorizontal="true"
-                android:text="@string/calendar"
+                android:text="@string/addEvent"
                 android:textColor="@color/white"/>
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 
-    <CalendarView
-        android:id="@+id/cvMyCalendar"
+    <EditText
+        android:id="@+id/etEventName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/myEventToolbar"
-        android:layout_centerHorizontal="true" />
+        android:layout_margin="10dp"
+        android:hint="@string/eventName" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvMyEvents"
+    <EditText
+        android:id="@+id/etEventDate"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/cvMyCalendar" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etEventLocation"
+        android:layout_margin="10dp"
+        android:focusable="false"
+        android:hint="@string/date"/>
+
+    <EditText
+        android:id="@+id/etEventLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etEventName"
+        android:layout_margin="10dp"
+        android:inputType="textMultiLine"
+        android:hint="@string/location"/>
+
+    <EditText
+        android:id="@+id/etEventOverview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etEventDate"
+        android:layout_margin="10dp"
+        android:inputType="textMultiLine"
+        android:hint="@string/overview"/>
+
 </RelativeLayout>

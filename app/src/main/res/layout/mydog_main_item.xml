@@ -31,9 +31,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ivAddProfile"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:text="@string/addDog"
+        android:textAlignment="center"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/tvProfileMeter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvProfileInfo"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/addDog" />
+        android:textAlignment="center" />
 
     <ImageButton
         android:id="@+id/ibBackground"
@@ -41,9 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@id/ivProfileBackground"
+        android:adjustViewBounds="true"
         android:src="@drawable/ic_camera_alt_black_24dp"
         android:tint="@color/gray"
-        />
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

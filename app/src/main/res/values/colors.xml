@@ -9,5 +9,8 @@
     <color name="button" >#00acf1</color>
     <color name="transparent" >#00ffffff</color>
     <color name="pink" >#ff7d73</color>
+    <color name="lightGray" >#e9ededed</color>
+    <color name="red">#ff5b5b</color>
+    <color name="color_stroke">#ffbf00</color>
 
 </resources>

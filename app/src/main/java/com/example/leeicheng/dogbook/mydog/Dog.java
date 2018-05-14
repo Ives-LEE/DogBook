@@ -9,26 +9,20 @@ import java.util.Date;
 
 public class Dog {
 
-    private int ownerId;
-
-    private int dogId;
-
-    private String name;
-
-    private String gender;
-
-    private String variety;
-
+    private int ownerId,dogId;
+    private String name, gender, variety;
     private Date birthday;
-
     private int age;
+
+
 
     public Dog(int dogId) {
         super();
         this.dogId = dogId;
     }
 
-    public Dog(String name, String gender, String variety, int age, Date birthday) {
+
+    public Dog(String name, String gender, String variety,int age , Date birthday) {
         super();
         this.name = name;
         this.gender = gender;
@@ -37,7 +31,8 @@ public class Dog {
         this.age = age;
     }
 
-    public Dog(int ownerId, String name, String gender, String variety, int age, Date birthday) {
+
+    public Dog(int ownerId,String name, String gender, String variety, int age,Date birthday) {
         this.ownerId = ownerId;
         this.name = name;
         this.birthday = birthday;
@@ -46,6 +41,16 @@ public class Dog {
         this.variety = variety;
     }
 
+    public Dog(int ownerId, int dogId,String name, String gender, String variety, int age,Date birthday) {
+        super();
+        this.ownerId = ownerId;
+        this.dogId = dogId;
+        this.name = name;
+        this.gender = gender;
+        this.variety = variety;
+        this.birthday = birthday;
+        this.age = age;
+    }
 
     public int getOwnerId() {
         return ownerId;
@@ -54,6 +59,7 @@ public class Dog {
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }
+
 
 
     public int getDogId() {

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
 
 
 import com.example.leeicheng.dogbook.chats.ChatWebSocketClient;
@@ -55,9 +56,14 @@ public class Common {
     public final static String DELETE_LIKE = "deleteLike";
     public final static String SELECT_LIKE = "selectLike";
     public final static String GET_LIKE_COUNT = "getLikeCount";
+    public final static String ADD_METER = "addMeter";
+    public final static String GET_METER = "getMeter";
+    public final static String GET_EVENTS = "getEvents";
+    public final static String ADD_EVENT = "addEvent";
 
 
 
+    public static float mile = 0;
     public static int room = -1;
     public static ChatWebSocketClient chatWebSocketClient;
 
@@ -81,6 +87,16 @@ public class Common {
             chatWebSocketClient = null;
         }
 
+    }
+
+    // ben added below two showToast
+
+    public static void showToast(Context context, int messageResId) {
+        Toast.makeText(context, messageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -160,9 +176,4 @@ public class Common {
         pref.edit().putInt("roomId", roomId).apply();
     }
 
-    public static String dateFormat(String date){
-        String result = null;
-
-        return result;
-    }
 }

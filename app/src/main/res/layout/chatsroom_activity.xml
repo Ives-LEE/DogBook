@@ -25,7 +25,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:textSize="24dp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
 
             <ImageView
                 android:id="@+id/ivRightToolbarChatroom"
@@ -34,7 +34,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:tint="@color/white"/>
+                android:tint="@color/white" />
 
             <ImageView
                 android:id="@+id/ivLeftToolbarChatroom"
@@ -44,14 +44,13 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
                 android:src="@drawable/ic_arrow_back_black_24dp"
-                android:tint="@color/white"/>
+                android:tint="@color/white" />
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
 
     <RelativeLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tbChatroom">
@@ -60,26 +59,32 @@
             android:id="@+id/rvChats"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/etInput"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_above="@id/etInput"/>
+
+        <ImageButton
+            android:id="@+id/ibSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            style="?android:attr/borderlessButtonStyle"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_send_black_24dp"
+            android:tint="@color/colorAccent"/>
 
         <EditText
             android:id="@+id/etInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:inputType="textMultiLine"
-            />
-
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:text="@string/submit" />
+            android:inputType="textMultiLine"
+            android:layout_toLeftOf="@id/ibSubmit"
+            android:layout_marginLeft="10dp"/>
     </RelativeLayout>
+
+
 
 
 </RelativeLayout>

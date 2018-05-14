@@ -35,8 +35,8 @@ public class MediaAction {
             width = 150;
             height = 150;
         } else if (action.equals(Common.BACKGROUND_PHOTO)) {
-            width = 160;
-            height = 90;
+            width = 800;
+            height = 450;
         }
 
         croppedImageUri = Uri.fromFile(file);

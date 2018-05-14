@@ -22,7 +22,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="@string/addArticle"
-                android:textSize="24dp"/>
+                android:textSize="24dp"
+                android:textColor="@color/white"/>
 
             <ImageView
                 android:id="@+id/ivLeftToolbar"
@@ -31,16 +32,19 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
+                android:tint="@color/white"
                 android:src="@drawable/ic_arrow_back_black_24dp"/>
 
-            <Button
-                android:id="@+id/btnSend"
+            <ImageButton
+                android:id="@+id/ibSend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_centerVertical="true"
-                android:text="send"
+                android:src="@drawable/ic_send_black_24dp"
+                android:adjustViewBounds="true"
+                android:tint="@color/white"
                 />
 
 

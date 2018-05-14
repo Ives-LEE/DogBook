@@ -10,10 +10,10 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfilePhoto"
+        style="@style/SignUp"
         android:layout_width="130dp"
         android:layout_height="130dp"
-        android:src="@drawable/ic_add"
-        style="@style/SignUp"/>
+        android:src="@drawable/ic_add" />
 
 
     <EditText
@@ -21,18 +21,18 @@
         style="@style/SignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/ivProfilePhoto"
+        android:layout_toRightOf="@id/ivProfilePhoto"
         android:ems="10"
         android:hint="@string/name"
-        android:inputType="textPersonName"
-        android:layout_alignBottom="@id/ivProfilePhoto"
-        android:layout_toRightOf="@id/ivProfilePhoto"/>
+        android:inputType="textPersonName" />
 
     <LinearLayout
         android:id="@+id/llBirthday"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@id/ivProfilePhoto">
+        android:layout_below="@id/ivProfilePhoto"
+        android:orientation="horizontal">
 
         <EditText
 
@@ -44,8 +44,7 @@
             android:ems="10"
             android:focusable="false"
             android:hint="@string/birthday"
-            android:inputType="text"
-            />
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/etAgeAddDog"
@@ -59,13 +58,13 @@
     </LinearLayout>
 
     <RadioGroup
-        style="@style/SignUp"
         android:id="@+id/rgGenderAddDog"
+        style="@style/SignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_alignLeft="@id/ivProfilePhoto"
         android:layout_below="@id/llBirthday"
-        android:layout_alignLeft="@id/ivProfilePhoto">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/rbHideAddDog"
@@ -85,8 +84,7 @@
             android:id="@+id/rbFemaleAddDog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/female"
-            />
+            android:text="@string/female" />
 
     </RadioGroup>
 
@@ -95,27 +93,27 @@
         style="@style/SignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rgGenderAddDog"/>
+        android:layout_below="@id/rgGenderAddDog" />
 
     <Button
         android:id="@+id/btnAddDog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add"
-        android:textAllCaps="false"
         android:layout_alignParentBottom="true"
+        android:layout_alignRight="@id/etNameAddDog"
         android:layout_marginBottom="16dp"
-        android:layout_alignRight="@id/etNameAddDog"/>
+        android:text="@string/add"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnCancelAddDog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
-        android:textAllCaps="false"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
-        android:layout_toLeftOf="@id/btnAddDog"/>
+        android:layout_toLeftOf="@id/btnAddDog"
+        android:text="@string/cancel"
+        android:textAllCaps="false" />
 
 
 </RelativeLayout>

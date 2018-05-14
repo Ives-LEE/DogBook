@@ -71,7 +71,9 @@ public class LoginActivity extends AppCompatActivity {
                             .apply();
                     int dogId = Common.getPreferencesDogId(getApplicationContext());
                     Log.d("設定",pref.getAll().toString());
-                    Common.connectServer(getApplicationContext(), dogId);
+                    if (Common.getPreferencesDogId(getApplicationContext()) != -1){
+                        Common.connectServer(getApplicationContext(), dogId);
+                    }
                     finish();
                 }
             }

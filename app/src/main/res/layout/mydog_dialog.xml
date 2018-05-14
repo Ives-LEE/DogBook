@@ -60,6 +60,17 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/goOut"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:drawableTop="@drawable/ic_directions_walk_black_24dp"
+                android:text="@string/goOut"
+                android:textSize="11sp"
+                tools:ignore="SmallSp" />
+
+            <Button
                 android:id="@+id/changeProfilePhoto"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="100dp"
@@ -68,7 +79,6 @@
                 android:drawableTop="@drawable/ic_insert_emoticon_black_24dp"
                 android:text="@string/changeProfilePhoto"
                 android:textSize="11sp"
-
                 tools:ignore="SmallSp" />
 
             <Button

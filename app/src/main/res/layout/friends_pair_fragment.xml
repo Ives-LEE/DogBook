@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/pairTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp"
+        android:text="Pair with someone"
+        tools:layout_editor_absoluteX="135dp"
+        tools:layout_editor_absoluteY="32dp" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vpPair"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@+id/pairTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="29dp">
+
+    </android.support.v4.view.ViewPager>
+
+
+
+
+    <Button
+        android:id="@+id/btLike"
+        android:layout_width="108dp"
+        android:layout_height="108dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/vpPair"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="79dp"
+        android:onClick="onLikeButtonClick"
+        tools:layout_editor_absoluteX="57dp"
+        tools:layout_editor_absoluteY="331dp" />
+
+    <Button
+        android:id="@+id/btDislike"
+        android:layout_width="108dp"
+        android:layout_height="108dp"
+
+        android:layout_alignTop="@+id/btLike"
+        android:layout_marginStart="52dp"
+        android:layout_toEndOf="@+id/btLike"
+        android:onClick="onDislikeButtonClick"
+        tools:layout_editor_absoluteX="221dp"
+        tools:layout_editor_absoluteY="331dp" />
+
+
+
+</RelativeLayout>

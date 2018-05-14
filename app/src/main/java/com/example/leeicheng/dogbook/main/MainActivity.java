@@ -67,7 +67,10 @@ public class MainActivity extends AppCompatActivity {
         findToolBarViews();
         findViews();
         startService();
-
+        int dogId = Common.getPreferencesDogId(getApplicationContext());
+        if ( dogId != -1){
+            Common.connectServer(getApplicationContext(), dogId);
+        }
     }
 
     void chatNotificationManager() {
@@ -120,14 +123,15 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d("房", "我在這" + Common.room);
                 int inRoom = Common.getPreferencesRoom(getApplicationContext());
-
+                //我沒在房間時 || 我在房間
                 if (Common.room == -1 || Common.room == inRoom) {
                     String message = intent.getStringExtra("message");
                     Chat chat = new Gson().fromJson(message, Chat.class);
+
                     int room = chat.getChatroomId();
                     int receiver = getReceiver(room, chat.getSenderId());
-                    //TODO
-                    if ( receiver == Common.getPreferencesDogId(context) && Common.room == -1) {
+                    //我在別的房間時
+                    if (receiver == Common.getPreferencesDogId(context) && Common.room != chat.getChatroomId()) {
                         sendNotification(chat);
                     }
                 }
@@ -136,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         void sendNotification(Chat chat) {
+
             Bundle bundle = new Bundle();
             bundle.putInt("friendId", chat.getSenderId());
             bundle.putInt("roomId", chat.getChatroomId());
@@ -143,11 +148,11 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtras(bundle);
 
             Dog dog = CommonRemote.getDogInfo(chat.getSenderId(), getApplicationContext());
-
             PendingIntent pendingIntent =
-                    PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-            Notification notification = null;
+
+            Notification notification ;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 notification = new Notification.Builder(getApplicationContext(), CHAT_CHINNEL)
                         .setContentTitle(dog.getName())

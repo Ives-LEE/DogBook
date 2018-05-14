@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,7 +44,7 @@ public class ChatroomActivity extends AppCompatActivity {
     EditText etInput;
     ImageView ivLeftToolbar;
     RecyclerView rvChats;
-    Button btnSubmit;
+    ImageButton ibSubmit;
     Toolbar tbChatroom;
     int friendId, roomId;
     GeneralTask generalTask;
@@ -100,7 +101,7 @@ public class ChatroomActivity extends AppCompatActivity {
 
     void findViews() {
         rvChats = findViewById(R.id.rvChats);
-        btnSubmit = findViewById(R.id.btnSubmit);
+        ibSubmit = findViewById(R.id.ibSubmit);
         etInput = findViewById(R.id.etInput);
         viewsControl();
     }
@@ -123,7 +124,7 @@ public class ChatroomActivity extends AppCompatActivity {
 //                rvChats.scrollToPosition(chatsAdapter.getItemCount()-1);
             }
         });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        ibSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 submit();

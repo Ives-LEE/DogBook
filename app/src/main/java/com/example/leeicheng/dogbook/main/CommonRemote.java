@@ -20,6 +20,7 @@ public class CommonRemote {
 
 
     public static String TAG = "CommonRemote";
+
     public static Dog getDogInfo(int dogId, Context context) {
         Gson gson = new GsonBuilder().create();
         Dog dog = null;
@@ -99,5 +100,34 @@ public class CommonRemote {
                 Log.e(TAG, e.toString());
             }
         }
+    }
+
+    public static float getMeter(int dogId, Context context) {
+        Gson gson = new GsonBuilder().create();
+        float meter = 0;
+
+        GeneralTask generalTask;
+        if (Common.isNetworkConnect(context)) {
+            String url = Common.URL + "/DogServlet";
+            JsonObject jsonObject = new JsonObject();
+
+            jsonObject.addProperty("status", Common.GET_METER);
+            jsonObject.addProperty("dogId", dogId);
+
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+
+                String JsonIn = generalTask.execute().get();
+                jsonObject = new Gson().fromJson(JsonIn, JsonObject.class);
+                meter = jsonObject.get("meter").getAsFloat();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return meter;
     }
 }

@@ -2,49 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"
         android:background="@drawable/friend_background" />
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/btSearch"
+        android:layout_alignStart="@+id/rvMember"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="25dp" />
 
     <ImageView
         android:id="@+id/btSearch"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignEnd="@+id/rvMember"
-        android:layout_marginEnd="25dp"
+        android:layout_marginHorizontal="280dp"
+        android:layout_marginStart="17dp"
+
         android:layout_marginTop="25dp"
-        android:src="@drawable/search" />
+        android:layout_toEndOf="@+id/etSearch"
+        android:src="@drawable/search"
+        android:text="Search" />
+
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvMember"
 
+        android:id="@+id/rvSearch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/btSearch"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@id/etSearch"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
         android:columnWidth="90dp"
         android:numColumns="auto_fit"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="53dp" />
 
-    <!--<ImageButton-->
-    <!--android:id="@+id/ibPair"-->
-    <!--android:layout_width="88dp"-->
-    <!--android:layout_height="86dp"-->
-
-    <!--android:layout_alignEnd="@+id/btSearch"-->
-    <!--android:layout_below="@+id/rvMember"-->
-    <!--android:layout_marginEnd="24dp"-->
-    <!--android:layout_marginHorizontal="230dp"-->
-    <!--android:layout_marginTop="33dp"-->
-    <!---->
-    <!--/>-->
 
 </RelativeLayout>

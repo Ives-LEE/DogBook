@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp">
+
+    <ImageView
+        android:id="@+id/ivFriendItem"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:background="@drawable/paw" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivPhoto"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_horizontal"
+        android:elevation="5dp"
+        android:scaleType="centerCrop"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="3dp" />
+
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivFriendItem"
+        android:layout_centerHorizontal="true"
+        android:text="Name"
+        android:textColor="@color/black" />
+
+
+</RelativeLayout>

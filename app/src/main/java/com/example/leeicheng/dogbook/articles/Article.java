@@ -1,10 +1,12 @@
 package com.example.leeicheng.dogbook.articles;
 
+import java.io.Serializable;
+
 /**
  * Created by leeicheng on 2018/5/2.
  */
 
-public class Article {
+public class Article implements Serializable{
     int dogId,status,articleId;
     String content,location;
     int mediaId;

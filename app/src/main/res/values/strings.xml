@@ -26,7 +26,7 @@
     <string name="changeProfilePhoto">Change Photo</string>
     <string name="changeBackgroundPhoto">Change Background</string>
     <string name="calendar">Calendar</string>
-    <string name="addPicture">choose / take picture</string>
+    <string name="addPicture">choose picture</string>
     <string name="saySomething">Say Something</string>
     <string name="addArticle">Add Article</string>
     <string name="submit">Submit</string>
@@ -34,4 +34,40 @@
     <string name="messageEmpty">Message is Empty</string>
     <string name="variety">Variety</string>
     <string name="gender">Gender</string>
+    <string name="getOut">Get Out</string>
+    <string name="goOut">Go Out</string>
+    <string name="mile">mile</string>
+    <string name="meter">meter</string>
+    <string name="hint_etLocationName">location name or address</string>
+    <string name="text_btDistance">Distance</string>
+    <string name="text_btDirect">Direct</string>
+    <string name="msg_LastLocationNotAvailable">The last location is not available, please wait for a while</string>
+    <string name="msg_GoogleApiClientConnectionFailed">GoogleApiClient connection failed</string>
+    <string name="msg_GoogleApiClientConnectionSuspended">GoogleApiClient connection suspended</string>
+    <string name="msg_LocationNotAvailable">Location is not available</string>
+    <string name="msg_InvalidInput">Invalid input</string>
+    <string name="text_ShouldGrant">Permission to access location should be granted</string>
+    <string name="walk">Go Out</string>
+    <string name="addEvent">Add Event</string>
+    <string name="eventName">Event Name</string>
+    <string name="date">Date</string>
+    <string name="location">Location</string>
+    <string name="overview">Overview</string>
+
+    <string name="msg_NoNewsFound">No news found</string>
+    <string name="msg_NoSpotsFound">No activities found</string>
+    <string name="msg_MapNotDisplayed">Map cannot be displayed</string>
+    <string name="msg_ClickAgain">Please click the item again</string>
+    <string name="msg_NoNetwork">no network connection available</string>
+    <string name="msg_InsertSuccess">Insert successfully</string>
+    <string name="msg_InsertFail">Insert fail</string>
+    <string name="msg_UpdateSuccess">Update successfully</string>
+    <string name="msg_UpdateFail">Update fail</string>
+    <string name="msg_DeleteSuccess">Delete successfully</string>
+    <string name="msg_DeleteFail">Delete fail</string>
+    <string name="msg_NameIsInvalid">Activity name is invalid</string>
+    <string name="msg_NoImage">No image</string>
+    <string name="msg_NoDataFound">No data found</string>
+    <string name="text_NoCameraApp">no camera apps found</string>
+
 </resources>
