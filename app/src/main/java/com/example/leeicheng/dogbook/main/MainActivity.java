@@ -29,7 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.leeicheng.dogbook.R;
-import com.example.leeicheng.dogbook.activities.ActivitiesFragment;
+import com.example.leeicheng.dogbook.activities.ActivityFragment;
 import com.example.leeicheng.dogbook.articles.AddArticleActivity;
 import com.example.leeicheng.dogbook.articles.ArticlesFragment;
 import com.example.leeicheng.dogbook.chats.Chat;
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.navActivities:
                         setToolbar(R.id.navActivities);
-                        selectedFragment = new ActivitiesFragment();
+                        selectedFragment = new ActivityFragment();
                         break;
                     case R.id.navFriends:
                         setToolbar(R.id.navFriends);

@@ -368,8 +368,12 @@ public class MyDogFragment extends Fragment {
                             context.startActivity(intent);
                         } else {
                             int dogId = Common.getPreferencesDogId(getActivity());
+
+
                             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+
                             View dialogView = getLayoutInflater().inflate(R.layout.mydog_dialog, null);
+
                             final ImageView background = dialogView.findViewById(R.id.ivBackgroundDialog);
                             ImageView ProfilePhoto = dialogView.findViewById(R.id.ivProfilePhotoDialog);
                             TextView tvName = dialogView.findViewById(R.id.tvNameDialog);
@@ -402,7 +406,6 @@ public class MyDogFragment extends Fragment {
                                     myDogDialog.cancel();
                                 }
                             });
-
                             signOut.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

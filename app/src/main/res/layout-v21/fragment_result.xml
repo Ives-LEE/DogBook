@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20sp">
+
+
+    <ImageView
+        android:src="@drawable/dog05"
+        android:id="@+id/ivActivity"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="活動名稱" />
+
+
+    <TextView
+        android:id="@+id/tvActDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="時間" />
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivMarker"
+        android:layout_width="33dp"
+        android:layout_height="34dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="5dp"
+        android:src="@mipmap/marker" />
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="地址" />
+</RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="81dp"
+        android:text="狗狗活動詳細內容介紹" />
+
+    <Button
+        android:id="@+id/btnJoin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"
+        android:onClick="onClick"
+        android:text="我要參加" />
+
+
+</LinearLayout>

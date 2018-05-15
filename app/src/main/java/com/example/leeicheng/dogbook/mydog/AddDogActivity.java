@@ -172,7 +172,7 @@ public class AddDogActivity extends AppCompatActivity {
         });
 
     }
-
+    //隱藏鍵盤
     void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
