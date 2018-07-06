@@ -49,6 +49,7 @@
 
 
 
+
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
@@ -80,13 +81,13 @@
 
             <Button
                 android:id="@+id/btnGetPicture"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_below="@id/ivArticlePhotoAdd"
-                android:textColor="@color/button"
-                android:text="@string/addPicture"/>
-
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="68dp"
+                android:text="@string/addPicture"
+                android:textColor="@color/button" />
         </RelativeLayout>
     </ScrollView>
 

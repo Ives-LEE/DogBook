@@ -1,6 +1,7 @@
 package com.example.leeicheng.dogbook.articles;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -121,6 +123,24 @@ public class ArticlesFragment extends Fragment {
             likeCount = getLikeCount(article.getArticleId());
             holder.likesCount.setText(likeCount + " likes");
 
+            int messageCount = getMessagesSize(article.getArticleId());
+
+            holder.btnMessageBoard.setText(R.string.messageBoard);
+            String text = holder.btnMessageBoard.getText()+" ("+messageCount+")";
+            holder.btnMessageBoard.setText(text);
+            holder.btnMessageBoard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int articleId = article.getArticleId();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("articleId",articleId);
+                    Intent intent = new Intent(getActivity(),MessageBoardActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+                }
+            });
+
         }
 
         @Override
@@ -132,6 +152,7 @@ public class ArticlesFragment extends Fragment {
             ImageView civProfilePhoto, ivArticlePhoto;
             CheckBox cbLike;
             TextView tvPosterName, likesCount, tvArticleContent;
+            Button btnMessageBoard;
 
             public ArticleViewHolder(View view) {
                 super(view);
@@ -145,6 +166,7 @@ public class ArticlesFragment extends Fragment {
                 tvArticleContent = view.findViewById(R.id.tvArticleContent);
                 likesCount = view.findViewById(R.id.likesCount);
                 tvPosterName = view.findViewById(R.id.tvPosterName);
+                btnMessageBoard = view.findViewById(R.id.btnMessageBoard);
             }
         }
 
@@ -267,6 +289,30 @@ public class ArticlesFragment extends Fragment {
             }
         }
         return likeCount;
+    }
+
+    int getMessagesSize(int articleId) {
+        List<Message> messages = new ArrayList<>();
+
+        if (Common.isNetworkConnect(getActivity())) {
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            String url = Common.URL + "/ArticleServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("status", Common.GET_MESSAGE_BOARD);
+            jsonObject.addProperty("articleId", articleId);
+            generalTask = new GeneralTask(url, jsonObject.toString());
+
+            try {
+                String jsonIn = generalTask.execute().get();
+                Type type = new TypeToken<List<Message>>() {
+                }.getType();
+                messages = gson.fromJson(jsonIn, type);
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return messages.size();
     }
 
     @Override

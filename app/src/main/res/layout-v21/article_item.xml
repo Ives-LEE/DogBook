@@ -74,6 +74,15 @@
             android:layout_below="@id/tvArticleContent"
             android:adjustViewBounds="true"/>
 
+        <Button
+            android:id="@+id/btnMessageBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/messageBoard"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_below="@id/ivArticlePhoto"
+            android:textSize="10sp" />
+
 
     </RelativeLayout>
 

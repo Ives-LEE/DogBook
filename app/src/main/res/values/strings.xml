@@ -75,5 +75,6 @@
     <string name="text_Yes">Yes</string>
     <string name="text_No">No</string>
     <string name="text_Activity">Activity</string>
+    <string name="messageBoard">Message Board</string>
 
 </resources>
