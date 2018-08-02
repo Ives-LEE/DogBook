@@ -1,5 +1,6 @@
 package com.example.leeicheng.dogbook.activities;
 
+import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,9 +38,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -55,6 +59,8 @@ public class ActivityUpdateFragment extends Fragment {
     private static final int REQ_PICK_IMAGE = 1;
     private static final int REQ_CROP_PICTURE = 2;
     private Uri contentUri, croppedImageUri;
+    SimpleDateFormat timeFormatter;
+    SimpleDateFormat dateFormatter;
 
     @Nullable
     @Override
@@ -95,6 +101,15 @@ public class ActivityUpdateFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQ_PICK_IMAGE);
+            }
+        });
+
+        etActDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showDatePicker();
+
             }
         });
 
@@ -175,6 +190,24 @@ public class ActivityUpdateFragment extends Fragment {
         etActDate = rootView.findViewById(R.id.etActDate);
         etAddress = rootView.findViewById(R.id.etAddress);
         etContent = rootView.findViewById(R.id.etContent);
+    }
+
+    void showDatePicker() {
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        etActDate.setText(dateFormatter.format(new Date()));
+
+        Calendar newCalendar = Calendar.getInstance();
+
+        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                etActDate.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
     }
 
     private void dataBindViews() {
