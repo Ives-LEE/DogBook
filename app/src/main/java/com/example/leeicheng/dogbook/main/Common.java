@@ -63,6 +63,12 @@ public class Common {
     public final static String GET_MESSAGE_BOARD = "getMessageBoard";
     public final static String SEND_MESSAGE = "sendMessage";
 
+    public final static String GET_FRIEND_INFO = "getAll";
+    public final static String GET_All_Dog = "getAllDog";
+    public final static String ADD_FRIEND = "addFriend";
+    public final static String ADD_FRIEND_TO_CHECKLIST = "addFriendToCheckList";
+    public final static String GET_FRIENDID_FROM_CHECKLIST = "getFriendIdFromCheckList";
+    public final static String DELETE_FRIEND = "deleteFromCheckList";
 
 
 

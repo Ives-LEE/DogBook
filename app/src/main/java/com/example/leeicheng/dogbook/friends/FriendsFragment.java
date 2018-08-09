@@ -32,19 +32,22 @@ import java.util.Iterator;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
-    private static final String TAG = "ActivityFragment";
+    private static final String TAG = "FriendsFragment";
 
     private RecyclerView rvMember;
     private GridLayoutManager gridLayoutManager;
     private GeneralTask friendGetAllTask;
     private ImageView btSearch;
-    List<Dog> friends;
+    private ImageView btPair;
+    private  ImageView btConfirm;
+    List<Dog> friendList;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.friends_fragment, container, false);
-        friends = getAllFriends();
+
+        friendList = getAllFriends();
 
         findViews(view);
 
@@ -54,21 +57,15 @@ public class FriendsFragment extends Fragment {
     private void findViews(View view) {
 
         rvMember = view.findViewById(R.id.rvMember);
-        gridLayoutManager = (new GridLayoutManager(getActivity(), 3));
+        gridLayoutManager = (new GridLayoutManager(getActivity(), 1));
         btSearch = view.findViewById(R.id.btSearch);
+
         viewControl();
     }
 
     void viewControl() {
         //搜尋
-        btSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new FriendsSearchFragment();
-                switchFragment(fragment);
 
-            }
-        });
 
         rvMember.setLayoutManager(gridLayoutManager);
         rvMember.setAdapter(new FriendAdapter());
@@ -105,19 +102,25 @@ public class FriendsFragment extends Fragment {
 
         class MyViewHolder extends RecyclerView.ViewHolder {
             TextView tvName;
+            TextView tvAge;
+            TextView tvGender;
+            TextView tvVariety;
             ImageView ivPhoto;
 
             MyViewHolder(View itemView) {
                 super(itemView);
 
                 tvName =  itemView.findViewById(R.id.tvName);
+                tvAge =  itemView.findViewById(R.id.tvAge);
+                tvGender =  itemView.findViewById(R.id.tvGender);
+                tvVariety =  itemView.findViewById(R.id.tvVariety);
                 ivPhoto = itemView.findViewById(R.id.ivPhoto);
             }
         }
 
         @Override
         public int getItemCount() {
-            Iterator<Dog> iter = friends.iterator();
+            Iterator<Dog> iter = friendList.iterator();
 
             while (iter.hasNext()){
                 Dog dog = iter.next();
@@ -126,22 +129,28 @@ public class FriendsFragment extends Fragment {
                 }
             }
 
-            return friends.size();
+            return friendList.size();
         }
 
         @NonNull
         @Override
-        public FriendAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View itemView = layoutInflater.inflate(R.layout.friends_item_view, parent, false);
-            return new FriendAdapter.MyViewHolder(itemView);
+            return new MyViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
-            final Dog friend = friends.get(position);
+            final Dog friend = friendList.get(position);
+
 
             myViewHolder.tvName.setText(friend.getName());
+
+
+            myViewHolder.tvAge.setText(String.valueOf(friend.getAge()) + "歲");
+            myViewHolder.tvGender.setText(friend.getGender());
+            myViewHolder.tvVariety.setText(friend.getVariety());
             //get media
             CommonRemote.getProfilePhoto(friend.getDogId(),myViewHolder.ivPhoto,getActivity());
 
@@ -149,7 +158,7 @@ public class FriendsFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
 
-                    int dogId = Common.getPreferencesDogId(getActivity());
+                    int dogId = friend.getDogId();
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
                     View dialogView = getLayoutInflater().inflate(R.layout.mydog_dialog, null);
                     final ImageView background = dialogView.findViewById(R.id.ivBackgroundDialog);
@@ -181,24 +190,28 @@ public class FriendsFragment extends Fragment {
                     signOut.setVisibility(View.GONE);
                     goOut.setVisibility(View.GONE);
                 }
+
+
+                void getBackgroundPhoto(ImageView imageView) {
+
+                    MediaTask mediaTask;
+                    int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
+                    int dogId = friend.getDogId();
+                    if (Common.isNetworkConnect(getActivity())) {
+                        String url = Common.URL + "/MediaServlet";
+                        mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_BACKGROUND_PHOTO, "dog");
+                        try {
+                            mediaTask.execute();
+                        } catch (Exception e) {
+                            Log.e(TAG, e.toString());
+                        }
+                    }
+                }
             });
 
 
         }
-        void getBackgroundPhoto(ImageView imageView) {
-            MediaTask mediaTask;
-            int photoSize = getActivity().getResources().getDisplayMetrics().widthPixels;
-            int dogId = Common.getPreferencesDogId(getActivity());
-            if (Common.isNetworkConnect(getActivity())) {
-                String url = Common.URL + "/MediaServlet";
-                mediaTask = new MediaTask(url, dogId, photoSize, imageView, Common.GET_PROFILE_BACKGROUND_PHOTO, "dog");
-                try {
-                    mediaTask.execute();
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                }
-            }
-        }
+
 
     }
 

@@ -13,46 +13,104 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="19dp"
         android:text="Pair with someone"
+        android:textSize="25sp"
         tools:layout_editor_absoluteX="135dp"
         tools:layout_editor_absoluteY="32dp" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vpPair"
+    <de.hdodenhof.circleimageview.CircleImageView
+
+        android:id="@+id/ivPair"
+
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_below="@+id/pairTitle"
+
+
+        android:layout_marginTop="80dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="29dp">
+        android:elevation="20dp"
+        android:src="@drawable/question"
 
-    </android.support.v4.view.ViewPager>
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="3dp" />
 
 
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textStyle="bold|italic"
+        android:textSize="30sp"
+        android:textColor="#FFFF9D00"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/ivPair"
+        android:layout_marginTop="10dp"
+        android:text="" />
 
+
+    <TextView
+        android:id="@+id/tvAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textSize="17sp"
+        android:layout_below="@id/tvName"
+       android:layout_marginLeft="150dp"
+
+        android:layout_marginTop="5dp"
+        android:text="" />
+    <TextView
+        android:id="@+id/tvGender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@id/tvName"
+
+        android:layout_marginTop="5dp"
+        android:textSize="17sp"
+        android:layout_toEndOf="@id/tvAge"
+
+
+        android:text="" />
+    <TextView
+        android:id="@+id/tvVariety"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@id/tvName"
+
+        android:layout_marginTop="5dp"
+        android:textSize="17sp"
+        android:layout_toEndOf="@id/tvGender"
+        android:text="" />
 
     <Button
         android:id="@+id/btLike"
         android:layout_width="108dp"
-        android:layout_height="108dp"
+        android:layout_height="50dp"
 
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/vpPair"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="79dp"
-        android:onClick="onLikeButtonClick"
-        tools:layout_editor_absoluteX="57dp"
-        tools:layout_editor_absoluteY="331dp" />
+        android:background="@drawable/button_border"
+        android:text="送出邀請"
+
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="380dp"
+        android:shadowColor="@color/black"
+
+        android:onClick="onLikeButtonClick" />
+      " />
 
     <Button
         android:id="@+id/btDislike"
         android:layout_width="108dp"
-        android:layout_height="108dp"
+        android:layout_height="50dp"
+        android:text="找下一個"
 
-        android:layout_alignTop="@+id/btLike"
-        android:layout_marginStart="52dp"
-        android:layout_toEndOf="@+id/btLike"
-        android:onClick="onDislikeButtonClick"
-        tools:layout_editor_absoluteX="221dp"
-        tools:layout_editor_absoluteY="331dp" />
+        android:background="@drawable/button_border"
+
+
+        android:layout_marginLeft="270dp"
+        android:layout_marginTop="380dp"
+        android:onClick="onDislikeButtonClick" />
 
 
 

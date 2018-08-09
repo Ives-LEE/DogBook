@@ -487,7 +487,6 @@ public class MyDogFragment extends Fragment {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-
             }
             return articles;
         }
