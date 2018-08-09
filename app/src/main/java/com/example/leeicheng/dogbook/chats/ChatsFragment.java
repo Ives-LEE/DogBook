@@ -34,8 +34,6 @@ public class ChatsFragment extends Fragment {
     RecyclerView rvChatRoom;
     List<Room> rooms;
     GeneralTask generalTask;
-    MediaTask mediaTask;
-    String TAG = "";
     int friendId;
     Room room;
     List<Integer> friends;

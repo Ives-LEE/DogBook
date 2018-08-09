@@ -35,6 +35,7 @@ import com.example.leeicheng.dogbook.articles.ArticlesFragment;
 import com.example.leeicheng.dogbook.chats.Chat;
 import com.example.leeicheng.dogbook.chats.ChatroomActivity;
 import com.example.leeicheng.dogbook.chats.ChatsFragment;
+import com.example.leeicheng.dogbook.friends.FriendMainFragment;
 import com.example.leeicheng.dogbook.friends.FriendsFragment;
 import com.example.leeicheng.dogbook.mydog.Dog;
 import com.example.leeicheng.dogbook.mydog.MyDogFragment;
@@ -235,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.navFriends:
                         setToolbar(R.id.navFriends);
-                        selectedFragment = new FriendsFragment();
+                        selectedFragment = new FriendMainFragment();
                         break;
                     case R.id.navChats:
                         setToolbar(R.id.navChats);

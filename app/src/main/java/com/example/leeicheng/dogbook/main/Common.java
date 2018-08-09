@@ -32,8 +32,8 @@ public class Common {
     public static final String PROFILE_PHOTO = "profilePhoto";
     public static final String BACKGROUND_PHOTO = "backgroundPhoto";
     public final static String URL = "http://10.0.2.2:8080/DogBookServlet";
-//    public final static String URL = "http://192.168.43.68:8080/DogBookServlet";
-//    private static String SERVER_URI = "ws://192.168.43.68:8080/DogBookServlet/ChatWebSocketServer/";
+//    public final static String URL = "http://192.168.50.69:8080/DogBookServlet";
+//    private static String SERVER_URI = "ws://192.168.50.69:8080/DogBookServlet/ChatWebSocketServer/";
     private static String SERVER_URI = "ws://10.0.2.2:8080/DogBookServlet/ChatWebSocketServer/";
     public final static String PREF_FILE = "preference";
     public final static String INSERT = "insert";
@@ -60,6 +60,15 @@ public class Common {
     public final static String GET_METER = "getMeter";
     public final static String GET_EVENTS = "getEvents";
     public final static String ADD_EVENT = "addEvent";
+    public final static String GET_MESSAGE_BOARD = "getMessageBoard";
+    public final static String SEND_MESSAGE = "sendMessage";
+
+    public final static String GET_FRIEND_INFO = "getAll";
+    public final static String GET_All_Dog = "getAllDog";
+    public final static String ADD_FRIEND = "addFriend";
+    public final static String ADD_FRIEND_TO_CHECKLIST = "addFriendToCheckList";
+    public final static String GET_FRIENDID_FROM_CHECKLIST = "getFriendIdFromCheckList";
+    public final static String DELETE_FRIEND = "deleteFromCheckList";
 
 
 

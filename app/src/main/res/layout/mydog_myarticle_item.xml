@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
-    android:elevation="3dp">
+    android:elevation="3dp"
+    android:layout_margin="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout
-            android:id="@+id/rlTop"
+            android:id="@+id/rlMyArticle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -23,67 +21,49 @@
             android:paddingTop="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/civProfilePhoto"
+                android:id="@+id/civMyArticleAuthorPhoto"
                 android:layout_width="40dp"
                 android:layout_marginTop="5dp"
 
                 android:layout_height="40dp"/>
 
             <TextView
-                android:id="@+id/tvPosterName"
+                android:id="@+id/tvMyArticleName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/civProfilePhoto"
+                android:layout_toEndOf="@+id/civMyArticleAuthorPhoto"
                 android:paddingLeft="10dp"
                 android:textSize="16sp" />
 
-            <CheckBox
-                android:id="@+id/cbLike"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:button="@color/transparent"
-                android:backgroundTint="@color/pink"
-                android:background="@drawable/ic_favorite_border_black_24dp" />
-
-            <TextView
-                android:id="@+id/likesCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/cbLike"
-                android:text=" 0 likes"
-                android:layout_marginTop="10dp"/>
 
 
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/tvArticleContent"
+            android:id="@+id/tvMyArticleContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/rlTop"
+            android:layout_below="@id/rlMyArticle"
             android:layout_margin="10dp"
             android:layout_centerHorizontal="true"/>
 
         <ImageView
-            android:id="@+id/ivArticlePhoto"
+            android:id="@+id/ivMyArticlePhoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvArticleContent"
+            android:layout_below="@id/tvMyArticleContent"
             android:adjustViewBounds="true"/>
 
-        <Button
-            android:id="@+id/btnMessageBoard"
+
+        <TextView
+            android:id="@+id/tvLikeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/messageBoard"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_below="@id/ivArticlePhoto"
-            android:textSize="10sp" />
-
+            android:layout_below="@+id/ivMyArticlePhoto"
+            android:layout_margin="10dp" />
 
     </RelativeLayout>
+
 
 </android.support.v7.widget.CardView>

@@ -69,6 +69,7 @@ public class MediaTask extends AsyncTask<Object, Integer, Bitmap> {
             jsonObject.addProperty("dogId", id);
         } else if (kindOfId.equals("media")){
             jsonObject.addProperty("mediaId", id);
+            
         }
 
         jsonObject.addProperty("imageSize", imageSize);
@@ -97,7 +98,7 @@ public class MediaTask extends AsyncTask<Object, Integer, Bitmap> {
             if (responseCode == CONNECT_SUCCESS) {
                 bitmap = BitmapFactory.decodeStream(
                         new BufferedInputStream(connection.getInputStream()));
-
+                // 存入暫存區
             } else {
                 Log.d(TAG, "responseCode = " + responseCode);
             }
@@ -110,5 +111,13 @@ public class MediaTask extends AsyncTask<Object, Integer, Bitmap> {
         }
         return bitmap;
     }
+
+
+
+
+
+
+
+
 
 }

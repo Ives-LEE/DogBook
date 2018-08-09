@@ -3,7 +3,7 @@
     <item
         android:id="@+id/navMyDog"
         android:title="@string/myDog"
-        android:icon="@drawable/ic_dog"/>
+        android:icon="@drawable/ic_pets_black_24dp"/>
     <item
         android:id="@+id/navActivities"
         android:icon="@drawable/ic_activity_black_24dp"

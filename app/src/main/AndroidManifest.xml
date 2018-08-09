@@ -78,6 +78,9 @@
         <activity
             android:name=".mydog.AddEventActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".articles.MessageBoardActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".main.ChatService"

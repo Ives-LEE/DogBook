@@ -115,12 +115,14 @@ public class LoginActivity extends AppCompatActivity {
             Owner owner = new Owner(email,password);
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("status","signIn");
-            jsonObject.addProperty("owner", new Gson().toJson(owner));
+            String jsonStr = new Gson().toJson(owner);
+            jsonObject.addProperty("owner", jsonStr);
 
             GeneralTask generalTask = new GeneralTask(URL, jsonObject.toString());
 
             try {
                 String JsonIn = generalTask.execute().get();
+                Log.d("output","output = "+JsonIn);
                 jsonObject = new Gson().fromJson(JsonIn, JsonObject.class);
                 isLogin = jsonObject.get("isLogin").getAsBoolean();
                 ownerId = jsonObject.get("ownerId").getAsInt();

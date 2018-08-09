@@ -7,72 +7,29 @@
     android:layout_marginBottom="16dp"
     android:elevation="3dp">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMyArticle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/etMessageInput"/>
 
+    <EditText
+        android:id="@+id/etMessageInput"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/ibSendMessage" />
 
-        <RelativeLayout
-            android:id="@+id/rlTop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/civProfilePhoto"
-                android:layout_width="40dp"
-                android:layout_marginTop="5dp"
-
-                android:layout_height="40dp"/>
-
-            <TextView
-                android:id="@+id/tvPosterName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/civProfilePhoto"
-                android:paddingLeft="10dp"
-                android:textSize="16sp" />
-
-            <CheckBox
-                android:id="@+id/cbLike"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:button="@color/transparent"
-                android:backgroundTint="@color/pink"
-                android:background="@drawable/ic_favorite_border_black_24dp" />
-
-            <TextView
-                android:id="@+id/likesCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/cbLike"
-                android:text=" 0 likes"
-                android:layout_marginTop="10dp"/>
-
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tvArticleContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/rlTop"
-            android:layout_margin="10dp"
-            android:layout_centerHorizontal="true"/>
-
-        <ImageView
-            android:id="@+id/ivArticlePhoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvArticleContent"
-            android:adjustViewBounds="true"/>
-
-
-
+    <ImageButton
+        android:id="@+id/ibSendMessage"
+        android:src="@drawable/ic_send_black_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/borderlessButtonStyle"
+        android:adjustViewBounds="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:tint="@color/colorAccent"/>
 
 </RelativeLayout>

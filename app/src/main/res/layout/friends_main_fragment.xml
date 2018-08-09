@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+    android:background="@drawable/friendbg"
+        android:orientation="vertical">
+
+
+
+
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/flFriend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我的朋友" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/flSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="搜尋好友" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/flPair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="隨機配對" />
+            <android.support.design.widget.TabItem
+                android:id="@+id/flConfirmed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="好友確認" />
+        </android.support.design.widget.TabLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+    </LinearLayout>

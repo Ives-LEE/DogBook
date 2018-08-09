@@ -369,7 +369,6 @@ public class MyDogFragment extends Fragment {
                         } else {
                             int dogId = Common.getPreferencesDogId(getActivity());
 
-
                             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
 
                             View dialogView = getLayoutInflater().inflate(R.layout.mydog_dialog, null);
@@ -488,7 +487,6 @@ public class MyDogFragment extends Fragment {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-
             }
             return articles;
         }
