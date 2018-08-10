@@ -57,15 +57,15 @@
         android:layout_height="81dp"
         android:text="狗狗活動詳細內容介紹" />
 
-    <Button
-        android:id="@+id/btnJoin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="36dp"
-        android:onClick="onClick"
-        android:text="我要參加" />
+    <!--<Button-->
+        <!--android:id="@+id/btnJoin"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="36dp"-->
+        <!--android:onClick="onClick"-->
+        <!--android:text="我要參加" />-->
 
 
 </LinearLayout>

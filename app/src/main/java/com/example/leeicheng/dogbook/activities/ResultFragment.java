@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,28 +50,32 @@ public class ResultFragment extends Fragment {
         tvContent.setText("活動內容：" + content);
 
         //監聽 “我要參加” 按鈕
-        Button btnJoin = view.findViewById(R.id.btnJoin);
-        btnJoin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new ActivityJoinFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("activity", activity);
-                fragment.setArguments(bundle);
-                switchFragment(fragment);
-
-            }
+//        Button btnJoin = view.findViewById(R.id.btnJoin);
+//        btnJoin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Fragment fragment = new ActivityJoinFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("activity", activity);
+//                fragment.setArguments(bundle);
+//                switchFragment(fragment);
 
 
+         //   }
 
-            private void switchFragment(Fragment fragment) {
-                if (getFragmentManager() != null) {
-                    getFragmentManager().beginTransaction().
-                            replace(R.id.flMain, fragment).addToBackStack(null).commit();
-                }
-            }
 
-        });
+
+
+
+
+//            private void switchFragment(Fragment fragment) {
+//                if (getFragmentManager() != null) {
+//                    getFragmentManager().beginTransaction().
+//                            replace(R.id.flMain, fragment).addToBackStack(null).commit();
+//                }
+//            }
+//
+//        });
 
         //google map 按鈕監聽
         ImageView ivMarker = view.findViewById(R.id.ivMarker);

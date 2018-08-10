@@ -1,6 +1,8 @@
 package com.example.leeicheng.dogbook.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -28,6 +31,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.List;
+
+import static android.view.View.OnClickListener;
+import static android.view.View.OnLongClickListener;
 
 
 public class ActivityFragment extends Fragment {
@@ -61,15 +67,23 @@ public class ActivityFragment extends Fragment {
         FloatingActionButton btAdd = view.findViewById(R.id.btAdd);
 
         //監聽新增活動按鈕
-        btAdd.setOnClickListener(new View.OnClickListener() {
+        btAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 Fragment fragment = new ActivityInsertFragment();
                 switchFragment(fragment);
             }
         });
+
+
+
+       
+
+
         return view;
     }
+
+
 
     private void showAllActivities() {
         if (Common.networkConnected(getActivity())) {
@@ -118,6 +132,7 @@ public class ActivityFragment extends Fragment {
         class MyViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
             TextView tvName, tvActDate, tvAddress;
+            Button button;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -125,6 +140,7 @@ public class ActivityFragment extends Fragment {
                 tvName = itemView.findViewById(R.id.tvName);
                 tvActDate = itemView.findViewById(R.id.tvActDate);
                 tvAddress = itemView.findViewById(R.id.tvAddress);
+                button = itemView.findViewById(R.id.button);
             }
         }
 
@@ -141,7 +157,7 @@ public class ActivityFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
+        public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int position) {
             final Activity activity = activities.get(position);
             String url = Common.URL + "/ActivitiesServlet";
             int id = activity.getId();
@@ -152,7 +168,7 @@ public class ActivityFragment extends Fragment {
             myViewHolder.tvAddress.setText(activity.getLocation_address());
 
             //監聽按下itemView 進入詳細活動內容頁面, ResultFragment.
-            myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            myViewHolder.itemView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment = new ResultFragment();
@@ -164,9 +180,38 @@ public class ActivityFragment extends Fragment {
                 }
             });
 
+            //監聽 “立即報名” 按鈕
+          //  Button button = View.findViewById(R.id.button);
+
+            myViewHolder.button.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    myViewHolder.button.setText("已報名");
+
+                    Intent it = new Intent(Intent.ACTION_VIEW); //建立意圖並指定預設動作
+
+                    switch (view.getId()) {//讀取按鈕的 Id 來做相關處理
+                        case R.id.button:   //指定 E-mail 地址
+                            it.setData(Uri.parse("mailto:bresont@gmail.com"));
+                            it.putExtra(Intent.EXTRA_CC,                  //設定副本收件人
+                                    new String[]{"bresont@gmail.com"});
+                            it.putExtra(Intent.EXTRA_SUBJECT, "您好,歡迎報名本活動, 請提填寫以下資料寄回");  //設定主旨
+                            it.putExtra(Intent.EXTRA_TEXT, "參加活動名稱：" + "\n" + "姓名：" + "\n" + "聯絡電話:");   //設定內容
+                            break;
+
+                    }
+                    startActivity(it);  //啟動適合意圖的程式
+                    myViewHolder.button.setText("已報名");
+                }
+            });
 
 
-            myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+
+
+
+            myViewHolder.itemView.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     PopupMenu popupMenu = new PopupMenu(ActivityFragment.this.getActivity(), view, Gravity.END);
